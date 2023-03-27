@@ -1,0 +1,389 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<style>
+    .delete-photo-btn {
+        position: absolute;
+        top: 5px;
+        right: 20px;
+        margin: 0px;
+        color: black;
+        border: none;
+        border-radius: 4px;
+        padding: 1px 4px;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .gallery {
+      padding: 5px
+    }
+    .gallery img {
+      width: 150px;
+      height: 200px;
+      object-fit: cover;
+    }
+    .modal-m {
+      margin-right: 50px
+    }
+    .modal-m11 {
+      margin-left: 50px
+    }
+
+    .thumbnails {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .thumbnails img {
+      object-fit: cover;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+
+
+</style>
+
+
+<section style="background-color: #eee;">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col">
+                <nav aria-label="breadcrumb" class="bg-light rounded-3 p-3 mb-4">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">User</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        {% if post.avatar %}
+                        <img src="{{ post.avatar.url }}"
+                             alt="avatar"
+                             class="rounded-3 img-fluid" style="width: 250px;">
+                        {% endif %}
+                        <h5 class="my-3">{{ post.owner.first_name }} {{ post.owner.last_name }}</h5>
+                        <p class="text-muted mb-4">Последний раз в сети:<br> {{ post.owner.last_login.date }}</p>
+                        <!--                        <p class="text-muted mb-1">Full Stack Developer</p>-->
+                        <!--                        <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>-->
+                        {% if post.owner == user %}
+                        <div class="d-flex justify-content-center mb-2">
+                            <a href="{% url 'edit_profile' %}">
+                                <button type="button" class="btn btn-primary">Редактировать карточку</button>
+                            </a>
+                            {% if user.is_authenticated %}
+                            <button class="btn btn-sm btn-primary like-btn" data-post-id="{{ post.id }}">
+                                {% if request.user in post.like_ph.all %}
+                                <i class="fas fa-heart like-btn"></i>
+                                {% else %}
+                                <i class="far fa-heart like-btn"></i>
+                                {% endif %}
+                            </button>
+                            <span class="like-count">{{ post.like_ph.count }}</span> likes
+                            {% else %}
+                            <a href="{% url 'login' %}">Login</a> to like this post.
+                            {% endif %}
+                            <!--                            <button type="button" class="btn btn-outline-primary ms-1">Message</button>-->
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card mb-4 mb-lg-0">
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush rounded-3">
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <i class="fas fa-globe fa-lg text-warning"></i>
+                                <p class="mb-0">https://mdbootstrap.com</p>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <i class="fab fa-vk fa-lg" style="color: #333333;"></i>
+                                <p class="mb-0">mdbootstrap</p>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <i class="fab fa-telegram fa-lg" style="color: #55acee;"></i>
+                                <p class="mb-0">@mdbootstrap</p>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
+                                <p class="mb-0">mdbootstrap</p>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
+                                <p class="mb-0">mdbootstrap</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center">
+                            <h5>Фотографии</h5>
+                        </div>
+                        <div class="row">
+                            {% for i in ph_photos|slice:":6" %}
+                            <div class="col-2 mb-1 gallery">
+                                <img
+                                        alt="{{ photo.caption }}"
+                                        class="img-fluid rounded"
+                                        src="{{ i.image.url }}"
+                                />
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            {% if post.owner == user %}
+                            <div class="m-2">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#uploadModal">Добавить фотографии
+                                </button>
+                            </div>
+                            <!-- Modal -->
+                            <div class="modal fade modal" id="uploadModal" tabindex="-1"
+                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5 modal-m11" id="uploadModalLabel">Галерея</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <form method="post" enctype="multipart/form-data">
+                                                    {% csrf_token %}
+                                                    <div id="thumbnails"></div>
+                                                    {{ form.as_p }}
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Загрузить</button>
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">
+                                                            Close
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="m-2">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal">Просмотреть все
+                                </button>
+                            </div>
+                            <!-- Modal -->
+                            <div class="modal fade modal-xl" id="exampleModal" tabindex="-1"
+                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5 modal-m11" id="galleryModalLabel">Галерея</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body  modal-m modal-m11">
+                                            <div class="row">
+
+
+                                                {% for album in album_list %}
+                                                <div class="album">
+                                                    <!--                        <i class="fas fa-folder fa-4x mb-3"></i>-->
+                                                    <h2>{{ album.title }}</h2>
+                                                </div>
+                                                {% endfor %}
+
+
+                                                {% for i in ph_photos %}
+                                                <div class="col-2 mb-1 gallery" style="position: relative;">
+                                                    <a href="{{ i.image.url }}">
+                                                        <img
+                                                                alt="{{ photo.caption }}"
+                                                                class="img-fluid rounded"
+                                                                src="{{ i.image.url }}"
+                                                        />
+                                                    </a>
+                                                    {% if post.owner == user %}
+                                                    <button class="delete-photo-btn" data-photo-id="{{ i.pk }}"><i
+                                                            class="fa fa-trash opacity-25"></i></button>
+                                                    {% endif %}
+                                                </div>
+                                                {% endfor %}
+
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form method="POST" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                {{ create_album_form.as_p }}
+                                                <button type="submit" class="btn btn-primary">Create</button>
+                                            </form>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Имя/Фамилия</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">{{ post.owner.first_name }} {{ post.owner.last_name }}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Город:</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">{{ post.city }}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Возраст:</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">{{ post.age }}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">О себе:</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">{{ post.about }}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row align-items-center">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Согласие на сотрудничество по модели ТФП:</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">{% if post.tfp_photos %} Да {% else %} Нет {% endif %}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row align-items-center">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Возможна съемка в белье/купальнике:</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">{% if post.in_under_photos %} Да {% else %} Нет {% endif %}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Возможна ню-съемка:</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">{% if post.nu_photos %} Да {% else %} Нет {% endif %}</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row align-items-center">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Жанры съемок:</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">{% for genre in genres %} {{ genre }}<br> {% endfor %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.querySelectorAll('.delete-photo-btn').forEach(function(button) {
+  button.addEventListener('click', function() {
+    var photoId = this.dataset.photoId;
+    if (confirm('Вы уверены, что хотите удалить эту фотографию?')) {
+      fetch('/photographers/delete_photo/' + photoId + '/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({'photo_id': photoId})
+      })
+.then(function(response) {
+  if (response.ok) {
+    location.reload();
+  } else {
+    alert('Ошибка удаления фотографии');
+  }
+})
+      .catch(function(error) {
+        console.error('Ошибка удаления фотографии:', error);
+        alert('Ошибка удаления фотографии');
+      });
+    }
+  });
+});
+
+//Создание альбомов
+function createAlbum() {
+  var title = $('#album-title-input').val(); // Получаем значение поля ввода
+  $.ajax({
+    url: '/create-album/', // URL-адрес для отправки запроса на сервер
+    type: 'POST',
+    data: {title: title}, // Данные для отправки на сервер
+    success: function(response) {
+      // Обновляем содержимое модального окна
+      $('#myModal .modal-body').html(response);
+    },
+    error: function() {
+      alert('Ошибка при создании альбома');
+    }
+  });
+}
+//Создание альбомов
+
+//Отображение загружаемых фотографий
+$(document).ready(function() {
+  $('input[type="file"]').on('change', function(event) {
+    var files = event.target.files;
+    $('#thumbnails').empty();
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        var img = $('<img/>').attr('src', event.target.result);
+        img.css({
+          'max-width': '200px',
+          'max-height': '200px'
+        });
+        $('#thumbnails').append(img);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+});
+// Отображение загружаемых фотографий
+
+
+</script>
+{% endblock %}

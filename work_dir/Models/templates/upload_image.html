@@ -1,0 +1,64 @@
+<style>
+    .thumbnails {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .thumbnails img {
+      object-fit: cover;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+</style>
+
+
+<!-- Modal -->
+<div class="modal fade modal" id="uploadModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 modal-m11" id="exampleModalLabel">Галерея</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div id="thumbnails"></div>
+                        {{ form.as_p }}
+            <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Загрузить</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+  $('input[type="file"]').on('change', function(event) {
+    var files = event.target.files;
+    $('#thumbnails').empty();
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      var reader = new FileReader();
+      reader.onload = function(event) {
+        var img = $('<img/>').attr('src', event.target.result);
+        img.css({
+          'max-width': '200px',
+          'max-height': '200px'
+        });
+        $('#thumbnails').append(img);
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+});
+</script>

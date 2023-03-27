@@ -1,0 +1,74 @@
+<!-- Modal -->
+<div class="modal fade modal-xl" id="exampleModal" tabindex="-1"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 modal-m11" id="exampleModalLabel">Галерея</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body  modal-m modal-m11">
+                <div class="row">
+
+
+                    {% for album in album_list %}
+                    <div class="album">
+                        <i class="fa-duotone fa-folder"></i>
+                        <h2>{{ album.title }}</h2>
+                    </div>
+                    {% endfor %}
+
+
+                    {% for i in model_photos %}
+                    <div class="col-2 mb-1 gallery" style="position: relative;">
+                        <a href="{{ i.image.url }}">
+                        <img
+                                alt="{{ photo.caption }}"
+                                class="img-fluid rounded"
+                                src="{{ i.image.url }}"
+                        />
+                        </a>
+                        {% if post.owner == user %}
+                        <button class="delete-photo-btn" data-photo-id="{{ i.pk }}"><i
+                                class="fa fa-trash opacity-25"></i></button>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ create_album_form.as_p }}
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+function createAlbum() {
+  var title = $('#album-title-input').val(); // Получаем значение поля ввода
+  $.ajax({
+    url: '/create-album/', // URL-адрес для отправки запроса на сервер
+    type: 'POST',
+    data: {title: title}, // Данные для отправки на сервер
+    success: function(response) {
+      // Обновляем содержимое модального окна
+      $('#myModal .modal-body').html(response);
+    },
+    error: function() {
+      alert('Ошибка при создании альбома');
+    }
+  });
+}
+
+
+</script>

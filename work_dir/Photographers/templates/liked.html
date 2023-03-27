@@ -1,0 +1,12 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+    <h1>Liked Models</h1>
+    <ul>
+        {% for ph in liked_ph %}
+            <li><a href="{% url 'model_post' model.pk %}">{{ ph.owner.username }}</a></li>
+        {% empty %}
+            <li>You haven't liked any models yet.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

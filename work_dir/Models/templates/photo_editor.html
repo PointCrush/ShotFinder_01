@@ -1,0 +1,142 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<style>
+    .border-3 {
+        border-width: 3px !important;
+    }
+</style>
+
+<div class="container-fluid mt-5">
+    <div class="d-flex justify-content-between mb-3">
+        <div>
+            <h1>Albums</h1>
+        </div>
+        <div>
+            <button type="button" class="btn btn-danger" onclick="deleteSelected()">Удалить</button>
+<form id="move-photos-form" method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <select name="album" id="album-dropdown">
+    <option value="">Выберите альбом</option>
+    {% for album in albums %}
+    <option value="{{ album.id }}">{{ album.title }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" id="move-to-album-btn" disabled>Переместить в альбом</button>
+</form>
+        </div>
+    </div>
+    <div class="row">
+        {% for album in albums %}
+        <div class="col-6 col-md-4 col-lg-2 mb-3">
+            <a href="{% url 'photo_editor' pk=post.pk album_pk=album.pk %}" class="text-decoration-none text-dark">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-folder fa-4x mb-3"></i>
+                        <h5 class="card-title">{{ album.title }}</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <hr>
+<h1>{{ album_name }}</h1>
+    <form id="delete-form" method="post">
+        {% csrf_token %}
+        <div class="row row-cols-3 row-cols-md-4 row-cols-lg-6 g-3">
+            {% for photo in photos %}
+            <div class="col">
+                <div class="card">
+                    <img src="{{ photo.image.url }}" class="img-fluid rounded" alt="{{ photo.title }}"
+                         data-id="{{ photo.pk }}" onclick="selectPhoto(event)">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </form>
+</div>
+
+
+<script>
+  // Удаление
+    function deleteSelected() {
+        const form = document.getElementById('delete-form');
+        const csrftoken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '{% url "delete_photos" %}');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('X-CSRFToken', csrftoken);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                window.location.reload();
+            }
+        };
+        xhr.send(JSON.stringify(selectedPhotos));
+    }
+
+  // Выбор и перемещение фотографий в альбомы
+const albumDropdown = document.querySelector('#album-dropdown');
+const moveToAlbumBtn = document.querySelector('#move-to-album-btn');
+const movePhotosForm = document.getElementById("move-photos-form");
+let selectedPhotos = [];
+
+function selectPhoto(event) {
+  const photoId = event.target.getAttribute('data-id');
+  if (selectedPhotos.includes(photoId)) {
+    selectedPhotos.splice(selectedPhotos.indexOf(photoId), 1);
+    event.target.classList.remove('border', 'border-primary', 'border-3');
+  } else {
+    selectedPhotos.push(photoId);
+    event.target.classList.add('border', 'border-primary', 'border-3');
+  }
+  // Активируем кнопку перемещения, если есть выбранные фотографии и выбран альбом
+  if (selectedPhotos.length > 0 && albumDropdown.value) {
+    moveToAlbumBtn.disabled = false;
+  } else {
+    moveToAlbumBtn.disabled = true;
+  }
+}
+
+albumDropdown.addEventListener('change', () => {
+  // Активируем кнопку перемещения, если есть выбранные фотографии и выбран альбом
+  if (selectedPhotos.length > 0 && albumDropdown.value) {
+    moveToAlbumBtn.disabled = false;
+  } else {
+    moveToAlbumBtn.disabled = true;
+  }
+});
+
+
+
+document.getElementById("move-photos-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  // Отправляем AJAX-запрос на сервер для перемещения фотографий в выбранный альбом
+  const albumId = albumDropdown.value;
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '{% url 'move-photos' %}');
+  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  xhr.setRequestHeader('X-CSRFToken', csrfToken);
+  xhr.onreadystatechange = function() {
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+      // Очищаем список выбранных фотографий и деактивируем кнопку перемещения
+      selectedPhotos = [];
+      moveToAlbumBtn.disabled = true;
+      // Убираем выделение с выбранных фотографий
+      const selectedElements = document.querySelectorAll('.selected-photo');
+      selectedElements.forEach((element) => {
+        element.classList.remove('border', 'border-primary', 'border-3');
+      });
+      // Перезагружаем страницу после перемещения фотографий
+      window.location.reload();
+    }
+  };
+  xhr.send('album_id=' + encodeURIComponent(albumId) + '&photos=' + encodeURIComponent(JSON.stringify(selectedPhotos)));
+});
+
+</script>
+
+{% endblock %}
