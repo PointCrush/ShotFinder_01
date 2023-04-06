@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+
+
+{% block content %}
+<div class="container col-3 mt-5">
+    <div class="card mb-4 mb-lg-0">
+        <div class="card-body p-0">
+            <ul class="list-group list-group-flush rounded-3">
+                {% for notification in notifications %}
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                    <h5 class="mt-0">{{ notification.notification_type }}</h5>
+                    <p class="article-content">{{ notification.text }}</p>
+                    <div class="article-metadata">
+                        <small class="text-muted">{{ notification.created_at }}</small>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

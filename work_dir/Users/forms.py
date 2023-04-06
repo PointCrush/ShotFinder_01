@@ -4,9 +4,9 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import *
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    first_name = forms.CharField(max_length=30, required=True)
-    last_name = forms.CharField(max_length=30, required=True)
+    email = forms.EmailField(required=True, label='Почта')
+    first_name = forms.CharField(label='Имя', max_length=30, required=True)
+    last_name = forms.CharField(label='Фамилия', max_length=30, required=True)
 
     class Meta:
         model = User
@@ -36,7 +36,21 @@ class CustomUserCreationForm(UserCreationForm):
 class EditProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email')
+        fields = ('first_name', 'last_name')
+
+    first_name = forms.CharField(
+        label='Имя',
+        max_length=250,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    last_name = forms.CharField(
+        label='Фамилия',
+        max_length=250,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
 
 
 class LoginForm(AuthenticationForm):

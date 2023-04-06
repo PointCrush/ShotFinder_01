@@ -53,3 +53,14 @@ def edit_profile(request):
     else:
         form = EditProfileForm(instance=user)
     return render(request, 'edit_profile.html', {'form': form})
+
+@login_required
+def my_calendar(request):
+    return render(request, 'calendar.html')
+
+
+
+
+
+
+

@@ -8,5 +8,6 @@ urlpatterns = [
     path('logout/', logout_user, name='logout'),
     path('profile/', profile, name='profile'),
     path('profile/edit', edit_profile, name='edit_profile'),
+    # path('my_calendar/', my_calendar, name='my_calendar'),
 
 ]

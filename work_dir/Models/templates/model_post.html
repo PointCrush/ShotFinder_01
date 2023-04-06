@@ -30,6 +30,7 @@
     }
 
 
+
 </style>
 
 
@@ -72,14 +73,20 @@
                             {% endif %}
                         </form>
                         {% endif %}
-                        {% if post.owner == user %}
                         <div class="d-flex justify-content-center mb-2">
-                            <a href="{% url 'edit_profile' %}">
-                                <button type="button" class="btn btn-primary">Редактировать карточку</button>
+
+                        {% if post.owner == user %}
+                            <a href="{% url 'edit_model_post' post_id=post.pk %}">
+                                <button type="button" class="btn btn-primary btn-sm m-1">Редактировать карточку</button>
                             </a>
-                            <!--                            <button type="button" class="btn btn-outline-primary ms-1">Message</button>-->
-                        </div>
                         {% endif %}
+                            <a href="{% url 'calendar' owner=post.owner.pk %}">
+                                <button type="button" class="btn btn-primary btn-sm m-1">Календарь модели</button>
+                            </a>                            <a href="#">
+                                <button type="button" class="btn btn-primary btn-sm m-1">Пригласить в проект</button>
+                            </a>
+
+                        </div>
                     </div>
                 </div>
                 <div class="card mb-4 mb-lg-0">
@@ -91,15 +98,15 @@
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                 <i class="fab fa-vk fa-lg" style="color: #333333;"></i>
-                                <p class="mb-0">mdbootstrap</p>
+                                <p class="mb-0">{{ post.vk }}</p>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                 <i class="fab fa-telegram fa-lg" style="color: #55acee;"></i>
-                                <p class="mb-0">@mdbootstrap</p>
+                                <p class="mb-0">{{ post.tg }}</p>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                 <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
-                                <p class="mb-0">mdbootstrap</p>
+                                <p class="mb-0">{{ post.inst }}</p>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                 <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
@@ -143,9 +150,9 @@
             <div class="col-lg-8">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <div class="d-flex justify-content-center">
-                            <h5>Фотографии</h5>
-                        </div>
+<!--                        <div class="d-flex justify-content-center">-->
+<!--                            <h5>Фотографии</h5>-->
+<!--                        </div>-->
                         <div class="row">
                             {% for i in model_photos|slice:":6" %}
                             <div class="col-2 mb-1 gallery">
@@ -160,21 +167,16 @@
                         <div class="d-flex justify-content-center">
                             {% if post.owner == user %}
                             <div class="m-2">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#uploadModal">Добавить фотографии
-                                </button>
-                            </div>
-                            {% include 'upload_image.html' %}
-                            <div class="m-2">
-                                <a href="{% url 'photo_editor_all' pk=post.pk %}">
+                                <a href="{% url 'photo_editor' pk=post.pk album_pk=album_wall_pk %}">
                                     <button type="button" class="btn btn-primary">Photo Editor</button>
                                 </a>
                             </div>
                             {% endif %}
                             <div class="m-2">
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal">Просмотреть все
+                                        data-bs-target="#exampleModal" data-bs-album="Стена">Просмотреть все
                                 </button>
+
                             </div>
                             <!-- Modal -->
                             <div class="modal fade modal-xl" id="exampleModal" tabindex="-1"
@@ -182,46 +184,45 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5 modal-m11" id="exampleModalLabel">Галерея</h1>
+                                            <h1 class="modal-title fs-5 modal-m11" id="galleryModalLabel">Галерея</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close"></button>
                                         </div>
-                                        <div class="modal-body  modal-m modal-m11">
-                                            <div class="row">
-
-
+                                        <ul class="nav nav-tabs mt-3">
+                                            {% for album in album_list %}
+                                            <li class="nav-item">
+                                                <a class="nav-link" href="#{{ album.id }}" data-bs-toggle="tab">
+                                                    {{ album.title }}
+                                                </a>
+                                            </li>
+                                            {% endfor %}
+                                        </ul>
+                                        <div class="modal-body modal-m modal-m11">
+                                            <div class="tab-content">
                                                 {% for album in album_list %}
-                                                <div class="album">
-<!--                                                    <i class="fa-duotone fa-folder"></i>-->
-                                                    <h2>{{ album.title }}</h2>
+                                                <div class="tab-pane" id="{{ album.id }}">
+                                                    <div class="row">
+                                                        {% for photo in album.album.all %}
+                                                        <div class="col-2 mb-1 gallery" style="position: relative;">
+                                                            <a href="{{ photo.image.url }}">
+                                                                <img alt="{{ photo.caption }}" class="img-fluid rounded"
+                                                                     src="{{ photo.image.url }}"/>
+                                                            </a>
+                                                            {% if post.owner == user %}
+                                                            <button class="delete-photo-btn"
+                                                                    data-photo-id="{{ photo.pk }}">
+                                                                <i class="fa fa-trash opacity-25"></i>
+                                                            </button>
+                                                            {% endif %}
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
                                                 </div>
                                                 {% endfor %}
-
-
-                                                {% for i in model_photos %}
-                                                <div class="col-2 mb-1 gallery" style="position: relative;">
-                                                    <a href="{{ i.image.url }}">
-                                                        <img
-                                                                alt="{{ photo.caption }}"
-                                                                class="img-fluid rounded"
-                                                                src="{{ i.image.url }}"
-                                                        />
-                                                    </a>
-                                                    {% if post.owner == user %}
-                                                    <button class="delete-photo-btn" data-photo-id="{{ i.pk }}"><i
-                                                            class="fa fa-trash opacity-25"></i></button>
-                                                    {% endif %}
-                                                </div>
-                                                {% endfor %}
-
                                             </div>
+
                                         </div>
                                         <div class="modal-footer">
-                                            <form method="POST" enctype="multipart/form-data">
-                                                {% csrf_token %}
-                                                {{ create_album_form.as_p }}
-                                                <button type="submit" class="btn btn-primary">Create</button>
-                                            </form>
                                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                 Close
                                             </button>
@@ -436,6 +437,7 @@ function createAlbum() {
     }
   });
 }
+
 
 
 

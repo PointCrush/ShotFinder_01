@@ -89,7 +89,9 @@
                                 <p class="mb-0">Модель:</p>
                             </div>
                             <div class="col-sm-9">
-                                <p class="text-muted mb-0"><a href="{% url 'model_post' post_id=user.model.pk %}">-->Тык<--</a>
+                                <p class="text-muted mb-0"><a href="{% url 'model_post' post_id=user.model.pk %}">Модель</a>
+                                </p><hr>
+                                <p class="text-muted mb-0"><a href="{% url 'edit_model_post' post_id=user.model.pk %}">Редактировать карточку модели</a>
                                 </p>
                             </div>
                         </div>
@@ -152,6 +154,17 @@
                             </div>
                             <div class="col-sm-9">
                                 <p class="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Проекты</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0"><a href="{% url 'create_project' %}">Создать проект</a>
+                                </p>
+                                <p class="text-muted mb-0"><a href="{% url 'my_projects' %}">Мои проекты</a>
+                                </p>
                             </div>
                         </div>
                     </div>

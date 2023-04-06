@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'rest_framework',
+
     'multiupload',
 
     'Models',
@@ -44,6 +46,9 @@ INSTALLED_APPS = [
     'Studios',
     'Locations',
     'Users',
+    'Project_01',
+    'Calendar',
+    'Notifications',
 
     'django.contrib.sites',
     'allauth',

@@ -34,7 +34,9 @@ def show_model_post(request, post_id):
     avatar = post.avatar.url
     comments = post.get_comments()
     album_list = post.get_album_list()
+    album_wall_pk = get_object_or_404(album_list, title='Стена').pk
     model_photos = get_object_or_404(album_list, title='Стена').album.all()
+
 
     # Обработка комментариев
     if request.method == 'POST':
@@ -61,7 +63,29 @@ def show_model_post(request, post_id):
                                           image=image, album=all_album)  # create Image instance for each uploaded image
             return redirect('model_post', post_id=post.pk)
     else:
-        form = UploadImageForm()
+        upload_form = UploadImageForm()
+
+    context = {
+        'model_photos': model_photos,
+        'post': post,
+        'avatar': avatar,
+        'user': request.user,
+        'upload_form': upload_form,
+        'comment_form': comment_form,
+        'comments': comments,
+        'album_list': album_list,
+        'album_wall_pk': album_wall_pk,
+    }
+
+    return render(request, 'model_post.html', context=context)
+
+
+def photo_editor(request, pk, album_pk):
+    post = get_object_or_404(Model, pk=pk)
+    albums = post.get_album_list()
+    album = AlbumModel.objects.get(pk=album_pk)
+    photos = album.album.all()
+    album_name = album.title
 
     # Создание альбомов
     if request.method == 'POST':
@@ -70,23 +94,33 @@ def show_model_post(request, post_id):
             album = create_album_form.save(commit=False)
             album.owner = request.user.model
             album.save()
-            return redirect('model_post', post_id=post.pk)
+            return redirect('photo_editor', pk=post.pk, album_pk=album.pk)
     else:
         create_album_form = AlbumForm()
 
-    context = {
-        'model_photos': model_photos,
-        'post': post,
-        'avatar': avatar,
-        'user': request.user,
-        'form': form,
-        'comment_form': comment_form,
-        'comments': comments,
-        'create_album_form': create_album_form,
-        'album_list': album_list,
-    }
+    # Обработка загрузки фотографий
+    if request.method == 'POST':
+        form = UploadImageForm(request.POST, request.FILES)
+        if form.is_valid():
+            images = request.FILES.getlist('images')
+            for image in images:
+                ImageModel.objects.create(model=post,
+                                          image=image, album=album)
+            return redirect('photo_editor', pk=post.pk, album_pk=album.pk)
+    else:
+        upload_form = UploadImageForm()
 
-    return render(request, 'model_post.html', context=context)
+    context = {
+        'albums': albums,
+        'album_pk': album.pk,
+        'photos': photos,
+        'post': post,
+        'album_name': album_name,
+        'create_album_form': create_album_form,
+        'upload_form': upload_form,
+
+    }
+    return render(request, 'photo_editor.html', context)
 
 
 @login_required
@@ -107,6 +141,19 @@ def create_model(request):
         form = CreateModelForm()
     return render(request, 'create_model.html', {'form': form, 'context': 'модели'})
 
+@login_required
+def edit_model_post(request, post_id):
+    model = Model.objects.get(pk=post_id)
+    if request.method == 'POST':
+        form = EditModelForm(request.POST, request.FILES, instance=model)
+        if form.is_valid():
+            form.save()
+            return redirect('model_post', post_id=post_id)
+    else:
+        form = EditModelForm(instance=model)
+    return render(request, 'edit_model.html', {'form': form})
+
+
 
 @login_required
 def delete_photo(request, photo_id):
@@ -123,6 +170,16 @@ def comment_delete(request, pk):
     if request.user == comment.author:
         comment.delete()
     return redirect('model_post', post_id=comment.post.pk)
+
+@login_required
+def album_delete(request, pk, album_pk):
+    post = get_object_or_404(Model, pk=pk)
+    album_list = post.get_album_list()
+    album_wall_pk = get_object_or_404(album_list, title='Стена').pk
+    album = get_object_or_404(AlbumModel, pk=album_pk)
+    if request.user == post.owner:
+        album.delete()
+    return redirect('photo_editor', pk=post.pk, album_pk=album_wall_pk)
 
 
 def like_view(request, pk):
@@ -141,50 +198,9 @@ def liked_models(request):
     context = {
         'liked_models': liked_models
     }
-    return render(request, 'liked.html', context)
+    return render(request, 'ph_liked.html', context)
 
 
-# def create_album(request):
-#     if request.method == 'POST':
-#         create_album_form = AlbumForm(request.POST)
-#         if create_album_form.is_valid():
-#             album = create_album_form.save()
-#             return redirect('album_detail', album_id=album.pk)
-#     else:
-#         create_album_form = AlbumForm()
-#     context = {
-#         'create_album_form': create_album_form
-#     }
-#     return render(request, 'create_album.html', context)
-
-
-def photo_editor_all(request, pk):
-    post = get_object_or_404(Model, pk=pk)
-    albums = post.get_album_list()
-    photos = get_object_or_404(albums, title='Стена').album.all()
-
-    context = {
-        'albums': albums,
-        'photos': photos,
-        'post': post,
-        'album_name': 'Стена',
-    }
-    return render(request, 'photo_editor.html', context)
-
-def photo_editor(request, pk, album_pk):
-    post = get_object_or_404(Model, pk=pk)
-    albums = post.get_album_list()
-    album = AlbumModel.objects.get(pk=album_pk)
-    photos = album.album.all()
-    album_name = album.title
-
-    context = {
-        'albums': albums,
-        'photos': photos,
-        'post': post,
-        'album_name': album_name,
-    }
-    return render(request, 'photo_editor.html', context)
 
 def load_photos(request, album_id):
     album = get_object_or_404(AlbumModel, pk=album_id)

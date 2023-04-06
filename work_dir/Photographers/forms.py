@@ -5,7 +5,8 @@ from .models import *
 class PhForm(forms.ModelForm):
     class Meta:
         model = Photographer
-        fields = ['city', 'age', 'gender', 'genre', 'about', 'in_under_photos', 'nu_photos', 'tfp_photos', 'avatar', 'is_published']
+        fields = ['city', 'age', 'gender', 'genre', 'about', 'in_under_photos', 'nu_photos', 'tfp_photos', 'avatar',
+                  'is_published', 'inst', 'vk', 'tg']
 
     city = forms.CharField(
         label='Город',
@@ -71,8 +72,27 @@ class PhForm(forms.ModelForm):
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
 
+    inst = forms.CharField(
+        max_length=250,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    vk = forms.CharField(
+        max_length=250,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+    tg = forms.CharField(
+        max_length=250,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
+
 class UploadImageForm(forms.ModelForm):
-    images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True, 'class': 'form-control'}))
 
     class Meta:
         model = ImagePh
@@ -80,21 +100,22 @@ class UploadImageForm(forms.ModelForm):
 
 
 class CommentForm(forms.ModelForm):
-
     class Meta:
         model = CommentPh
-        fields = ('text', )
+        fields = ('text',)
         widgets = {
             'text': forms.Textarea(attrs={'rows': 3}),
         }
 
+
 class AlbumForm(forms.ModelForm):
     class Meta:
         model = AlbumPh
-        fields = ['title',]
+        fields = ['title', ]
         labels = {
             'title': 'Добавить альбом',
         }
+
 
 class MovePhotosForm(forms.Form):
     album = forms.ModelChoiceField(queryset=AlbumPh.objects.all())

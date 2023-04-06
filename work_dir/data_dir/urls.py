@@ -28,8 +28,10 @@ urlpatterns = [
     path('', include('Users.urls')),
     path('models/', include('Models.urls')),
     path('photographers/', include('Photographers.urls')),
-    # path('ph/', include('Photographers.urls')),
-    # path('staff/', include('Staff.urls')),
+    path('staff/', include('Staff.urls')),
+    path('projects/', include('Project_01.urls')),
+    path('calendar/', include('Calendar.urls')),
+    path('notifications/', include('Notifications.urls')),
     # path('studios/', include('Studios.urls')),
     # path('locations/', include('Locations.urls')),
 ]

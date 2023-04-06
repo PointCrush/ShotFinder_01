@@ -10,30 +10,29 @@
 <div class="container-fluid mt-5">
     <div class="d-flex justify-content-between mb-3">
         <div>
-            <h1>Albums</h1>
-        </div>
-        <div>
-            <button type="button" class="btn btn-danger" onclick="deleteSelected()">Удалить</button>
-<form id="move-photos-form" method="POST">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <select name="album" id="album-dropdown">
-    <option value="">Выберите альбом</option>
-    {% for album in albums %}
-    <option value="{{ album.id }}">{{ album.title }}</option>
-    {% endfor %}
-  </select>
-  <button type="submit" id="move-to-album-btn" disabled>Переместить в альбом</button>
-</form>
+            <!-- Buttons and forms section -->
+            <div>
+                <a class="btn btn-danger btn-sm m-2" href="{% url 'album_delete_staff' pk=post.pk album_pk=album_pk %}">Удалить
+                    текущий альбом</a>
+                <form method="post" class="form-inline form-control">
+                    {% csrf_token %}
+                    {{ create_album_form.as_p }}
+                    <button type="submit" class="btn btn-primary mt-2">Создать</button>
+                </form>
+            </div>
         </div>
     </div>
     <div class="row">
         {% for album in albums %}
         <div class="col-6 col-md-4 col-lg-2 mb-3">
-            <a href="{% url 'ph_photo_editor' pk=post.pk album_pk=album.pk %}" class="text-decoration-none text-dark">
+            <a href="{% url 'photo_editor_staff' pk=post.pk album_pk=album.pk %}" class="text-decoration-none text-dark">
                 <div class="card h-100">
                     <div class="card-body text-center">
+                        {% if album.pk == album_pk %}
+                        <i class="fas fa-folder fa-4x mb-3" style="color: #abd7e2;"></i>
+                        {% else %}
                         <i class="fas fa-folder fa-4x mb-3"></i>
+                        {% endif %}
                         <h5 class="card-title">{{ album.title }}</h5>
                     </div>
                 </div>
@@ -42,7 +41,30 @@
         {% endfor %}
     </div>
     <hr>
-<h1>{{ album_name }}</h1>
+    <h1>{{ album_name }}</h1>
+    <div>
+        <button type="button" class="btn btn-danger btn-sm m-2" onclick="deleteSelected()">Удалить выбранные
+            фотографии
+        </button>
+        <div class="w-50 m-2">
+            {% include 'upload_image.html' %}
+
+            <form id="move-photos-form" method="POST" class="form-inline form-control w-50">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <select name="album" id="album-dropdown" class="form-control">
+                    <option value="">Выберите альбом</option>
+                    {% for album in albums %}
+                    <option value="{{ album.id }}">{{ album.title }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" id="move-to-album-btn" class="btn btn-primary mt-2" disabled>Переместить в
+                    альбом
+                </button>
+            </form>
+        </div>
+
+    </div>
     <form id="delete-form" method="post">
         {% csrf_token %}
         <div class="row row-cols-3 row-cols-md-4 row-cols-lg-6 g-3">
@@ -65,7 +87,7 @@
         const form = document.getElementById('delete-form');
         const csrftoken = form.querySelector('[name=csrfmiddlewaretoken]').value;
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', '{% url "ph_delete_photos" %}');
+        xhr.open('POST', '{% url "delete_photos_staff" %}');
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.setRequestHeader('X-CSRFToken', csrftoken);
         xhr.onload = function() {
@@ -117,7 +139,7 @@ document.getElementById("move-photos-form").addEventListener("submit", (event) =
   const albumId = albumDropdown.value;
   const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
   const xhr = new XMLHttpRequest();
-  xhr.open('POST', '{% url 'ph_move-photos' %}');
+  xhr.open('POST', '{% url 'move-photos_staff' %}');
   xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
   xhr.setRequestHeader('X-CSRFToken', csrfToken);
   xhr.onreadystatechange = function() {
@@ -136,6 +158,16 @@ document.getElementById("move-photos-form").addEventListener("submit", (event) =
   };
   xhr.send('album_id=' + encodeURIComponent(albumId) + '&photos=' + encodeURIComponent(JSON.stringify(selectedPhotos)));
 });
+
+function validateForm() {
+  const imagesInput = document.getElementById('images');
+  if (imagesInput.files.length === 0) {
+    alert('Выберите как минимум одну фотографию для загрузки.');
+    return false;
+  }
+  return true;
+}
+
 
 </script>
 

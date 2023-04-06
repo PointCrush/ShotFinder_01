@@ -42,6 +42,7 @@
 
 
 
+
 </style>
 
 
@@ -72,26 +73,30 @@
                         <p class="text-muted mb-4">Последний раз в сети:<br> {{ post.owner.last_login.date }}</p>
                         <!--                        <p class="text-muted mb-1">Full Stack Developer</p>-->
                         <!--                        <p class="text-muted mb-4">Bay Area, San Francisco, CA</p>-->
-                        {% if post.owner == user %}
-                        <div class="d-flex justify-content-center mb-2">
-                            <a href="{% url 'edit_profile' %}">
-                                <button type="button" class="btn btn-primary">Редактировать карточку</button>
-                            </a>
-                            {% if user.is_authenticated %}
-                            <button class="btn btn-sm btn-primary like-btn" data-post-id="{{ post.id }}">
-                                {% if request.user in post.like_ph.all %}
-                                <i class="fas fa-heart like-btn"></i>
-                                {% else %}
-                                <i class="far fa-heart like-btn"></i>
-                                {% endif %}
+                        {% if user.is_authenticated %}
+                        <form method="POST" action="{% url 'ph_like_view' post.pk %}">
+                            {% csrf_token %}
+                            {% if request.user in post.like.all %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-heart"></i> Unlike
                             </button>
-                            <span class="like-count">{{ post.like_ph.count }}</span> likes
                             {% else %}
-                            <a href="{% url 'login' %}">Login</a> to like this post.
+                            <button type="submit" class="btn btn-primary">
+                                <i class="far fa-heart"></i> Like
+                            </button>
                             {% endif %}
-                            <!--                            <button type="button" class="btn btn-outline-primary ms-1">Message</button>-->
-                        </div>
+                        </form>
                         {% endif %}
+                        {% if post.owner == user %}
+                            <a href="{% url 'edit_ph_post' post_id=post.pk %}">
+                                <button type="button" class="btn btn-primary btn-sm m-1">Редактировать карточку</button>
+                            </a>
+                        {% endif %}
+                            <a href="{% url 'calendar' owner=post.owner.pk %}">
+                                <button type="button" class="btn btn-primary btn-sm m-1">Календарь модели</button>
+                            </a>                            <a href="#">
+                                <button type="button" class="btn btn-primary btn-sm m-1">Пригласить в проект</button>
+                            </a>
                     </div>
                 </div>
                 <div class="card mb-4 mb-lg-0">
@@ -103,15 +108,15 @@
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                 <i class="fab fa-vk fa-lg" style="color: #333333;"></i>
-                                <p class="mb-0">mdbootstrap</p>
+                                <p class="mb-0">{{ post.vk }}</p>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                 <i class="fab fa-telegram fa-lg" style="color: #55acee;"></i>
-                                <p class="mb-0">@mdbootstrap</p>
+                                <p class="mb-0">{{ post.tg }}</p>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                 <i class="fab fa-instagram fa-lg" style="color: #ac2bac;"></i>
-                                <p class="mb-0">mdbootstrap</p>
+                                <p class="mb-0">{{ post.inst }}</p>
                             </li>
                             <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                                 <i class="fab fa-facebook-f fa-lg" style="color: #3b5998;"></i>
@@ -120,7 +125,38 @@
                         </ul>
                     </div>
                 </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h3>New comment</h3>
+                            <form method="POST" class="post-form">{% csrf_token %}
+                                {{ comment_form.as_p }}
+                                <button type="submit" class="save btn btn-primary">Save</button>
+                            </form>
+                            <h3>Comments</h3>
+                            {% for comment in comments %}
+                            <hr>
+                            <div class="media content-section">
+                                <div class="media-body">
+                                    <h5 class="mt-0">{{ comment.author }}</h5>
+                                    <p class="article-content">{{ comment.text }}</p>
+                                    <div class="article-metadata">
+                                        <small class="text-muted">{{ comment.created_date }}</small>
+                                        {% if comment.author == user %}
+                                        <a class="btn btn-danger btn-sm"
+                                           href="{% url 'ph_comment_delete' pk=comment.pk %}">Delete</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p>No comments yet.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
+
             <div class="col-lg-8">
                 <div class="card mb-4">
                     <div class="card-body">
@@ -141,98 +177,62 @@
                         <div class="d-flex justify-content-center">
                             {% if post.owner == user %}
                             <div class="m-2">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#uploadModal">Добавить фотографии
-                                </button>
-                            </div>
-                            <!-- Modal -->
-                            <div class="modal fade modal" id="uploadModal" tabindex="-1"
-                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5 modal-m11" id="uploadModalLabel">Галерея</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="row">
-                                                <form method="post" enctype="multipart/form-data">
-                                                    {% csrf_token %}
-                                                    <div id="thumbnails"></div>
-                                                    {{ form.as_p }}
-                                                    <div class="modal-footer">
-                                                        <button type="submit" class="btn btn-primary">Загрузить</button>
-                                                        <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">
-                                                            Close
-                                                        </button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <a href="{% url 'ph_photo_editor' pk=post.pk album_pk=album_wall_pk %}">
+                                    <button type="button" class="btn btn-primary">Photo Editor</button>
+                                </a>
                             </div>
                             {% endif %}
                             <div class="m-2">
-                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal">Просмотреть все
-                                </button>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-album="Стена">Просмотреть все</button>
                             </div>
                             <!-- Modal -->
-                            <div class="modal fade modal-xl" id="exampleModal" tabindex="-1"
-                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5 modal-m11" id="galleryModalLabel">Галерея</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body  modal-m modal-m11">
-                                            <div class="row">
+<div class="modal fade modal-xl" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 modal-m11" id="galleryModalLabel">Галерея</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <ul class="nav nav-tabs mt-3">
+          {% for album in album_list %}
+          <li class="nav-item">
+            <a class="nav-link" href="#{{ album.id }}" data-bs-toggle="tab">
+              {{ album.title }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      <div class="modal-body modal-m modal-m11">
+        <div class="tab-content">
+          {% for album in album_list %}
+          <div class="tab-pane" id="{{ album.id }}">
+            <div class="row">
+              {% for photo in album.image_ph.all %}
+              <div class="col-2 mb-1 gallery" style="position: relative;">
+                <a href="{{ photo.image.url }}">
+                  <img alt="{{ photo.caption }}" class="img-fluid rounded" src="{{ photo.image.url }}" />
+                </a>
+                {% if post.owner == user %}
+                <button class="delete-photo-btn" data-photo-id="{{ photo.pk }}">
+                  <i class="fa fa-trash opacity-25"></i>
+                </button>
+                {% endif %}
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
-                                                {% for album in album_list %}
-                                                <div class="album">
-                                                    <!--                        <i class="fas fa-folder fa-4x mb-3"></i>-->
-                                                    <h2>{{ album.title }}</h2>
-                                                </div>
-                                                {% endfor %}
-
-
-                                                {% for i in ph_photos %}
-                                                <div class="col-2 mb-1 gallery" style="position: relative;">
-                                                    <a href="{{ i.image.url }}">
-                                                        <img
-                                                                alt="{{ photo.caption }}"
-                                                                class="img-fluid rounded"
-                                                                src="{{ i.image.url }}"
-                                                        />
-                                                    </a>
-                                                    {% if post.owner == user %}
-                                                    <button class="delete-photo-btn" data-photo-id="{{ i.pk }}"><i
-                                                            class="fa fa-trash opacity-25"></i></button>
-                                                    {% endif %}
-                                                </div>
-                                                {% endfor %}
-
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <form method="POST" enctype="multipart/form-data">
-                                                {% csrf_token %}
-                                                {{ create_album_form.as_p }}
-                                                <button type="submit" class="btn btn-primary">Create</button>
-                                            </form>
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                Close
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -383,7 +383,6 @@ $(document).ready(function() {
   });
 });
 // Отображение загружаемых фотографий
-
 
 </script>
 {% endblock %}

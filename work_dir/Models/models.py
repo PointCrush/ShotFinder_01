@@ -77,7 +77,7 @@ class CommentModel(models.Model):
     author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     author_name = models.CharField(max_length=50, null=True)
     post = models.ForeignKey(Model, on_delete=models.CASCADE, related_name='comments')
-    text = models.TextField(null=True)
+    text = models.TextField(null=False)
     created_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

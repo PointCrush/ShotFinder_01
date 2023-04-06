@@ -59,10 +59,10 @@ class ShootingGenre(models.Model):
 
 
 class CommentPh(models.Model):
-    author = models.OneToOneField(User, on_delete=models.DO_NOTHING)
+    author = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     author_name = models.CharField(max_length=50, null=True)
-    asshole = models.ForeignKey(Photographer, on_delete=models.CASCADE, related_name='comments')
-    text = models.TextField(null=True)
+    post = models.ForeignKey(Photographer, on_delete=models.CASCADE, related_name='comments')
+    text = models.TextField(null=False)
     created_date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
