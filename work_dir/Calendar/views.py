@@ -8,6 +8,23 @@ from Calendar.forms import EventForm
 from .models import Event
 
 
+
+ru_months = {
+    'January': 'Январь',
+    'February': 'Февраль',
+    'March': 'Март',
+    'April': 'Апрель',
+    'May': 'Май',
+    'June': 'Июнь',
+    'July': 'Июль',
+    'August': 'Август',
+    'September': 'Сентябрь',
+    'October': 'Октябрь',
+    'November': 'Ноябрь',
+    'December': 'Декабрь'
+}
+
+
 @login_required
 def calendar_view(request, owner,  year=None, month=None):
     event_list = Event.objects.filter(owner=owner)
@@ -55,6 +72,7 @@ def calendar_view(request, owner,  year=None, month=None):
     previous_year = year - 1
 
     month_name = calendar.month_name[month]
+    month_name = ru_months[month_name]
 
     context = {
         'weeks': weeks,

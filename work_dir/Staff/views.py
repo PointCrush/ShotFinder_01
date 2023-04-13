@@ -9,6 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django_filters.views import FilterView
 from django.contrib import messages
 
+from Notifications.models import Notification
 from Staff.filters import *
 from Staff.forms import *
 from Staff.models import *
@@ -49,6 +50,9 @@ def show_post_staff(request, post_id):
             comment.author_name = request.user.username
             comment.created_date = timezone.now()
             comment.save()
+            Notification.objects.create(user=post.owner,
+                                        notification_type='Новый комментарий: Стилист',
+                                        text=f'У стилиста новый комментарий')
             return redirect('post_staff', post_id=post.pk)
     else:
         comment_form = CommentForm()

@@ -24,7 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls, name='admin'),
     path('home/', home, name='home'),
 
-
     path('', include('Users.urls')),
     path('models/', include('Models.urls')),
     path('photographers/', include('Photographers.urls')),
@@ -32,8 +31,7 @@ urlpatterns = [
     path('projects/', include('Project_01.urls')),
     path('calendar/', include('Calendar.urls')),
     path('notifications/', include('Notifications.urls')),
-    # path('studios/', include('Studios.urls')),
-    # path('locations/', include('Locations.urls')),
+    path('chat/', include('chat.urls')),
 ]
 
 if settings.DEBUG:

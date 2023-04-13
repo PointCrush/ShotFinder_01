@@ -4,9 +4,12 @@ psycopg2==2.8.6
 pillow==9.4.0
 django-filter==22.1
 django-multiupload==0.6.1
-django-allauth==0.53.1
-djangorestframework==3.14.0
+django-allauth==0.54.0
+channels==3.0.4
+daphne
+# channels_redis
 
+# djangorestframework==3.14.0
 # celery[redis]==5.2.7
 # flower==1.2.0
 # celery_singleton==0.3.1

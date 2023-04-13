@@ -29,20 +29,20 @@ label.btn-outline-warning:not(.active):hover {
 <div class="container">
 
     <div class="col-1" style="background-color: white; height: 100px;"></div>
-    <div class="col-1" style="background-color: white; height: 50px;"></div>
-  <div class="row">
-  </div>
+    <div class="col-12 text-center" style="background-color: white; height: 50px;">
+        <h4>{{ month_name }} {{ month }}/{{ year }}</h4>
+    </div>
 </div>
 
 <div class="container d-flex justify-content-center">
     <div class="col-4 d-flex justify-content-center">
         {% if previous_month == 12 %}
         <a href="{% url 'calendar_ym' owner=owner year=previous_year month=previous_month %}">
-            <button class="btn btn-primary">Previous</button>
+            <button class="btn btn-primary m-2">Назад</button>
         </a>
         {% else %}
         <a href="{% url 'calendar_ym' owner=owner year=year month=previous_month %}">
-            <button class="btn btn-primary">Previous</button>
+            <button class="btn btn-primary m-2">Назад</button>
         </a>
         {% endif %}
         <table class="table">
@@ -71,15 +71,15 @@ label.btn-outline-warning:not(.active):hover {
                     {% elif day in date_free_day_list %}
                     <button
                             type="button" class="btn free-day" data-bs-toggle="modal"
-                            data-bs-target="#free-day-check-{{ day }}" title="Нажмите чтобы просмотреть заметку">{{ day }}
+                            data-bs-target="#free_day_check_{{ day }}" title="Нажмите чтобы просмотреть заметку">{{ day }}
                     </button>
                     <!-- Modal -->
-                    <div class="modal fade" id="free-day-check-{{ day }}" tabindex="-1"
-                         aria-labelledby="free-day-checkLabel-{{ day }}" aria-hidden="true">
+                    <div class="modal fade" id="free_day_check_{{ day }}" tabindex="-1"
+                         aria-labelledby="free_day_checkLabel_{{ day }}" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="free-day-checkLabel-{{ day }}"></h1>
+                                    <h1 class="modal-title fs-5" id="free_day_checkLabel_{{ day }}"></h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                 </div>
@@ -91,7 +91,7 @@ label.btn-outline-warning:not(.active):hover {
                                     {% endfor %}
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="btn" class="btn btn-secondary">Ok</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -124,7 +124,7 @@ label.btn-outline-warning:not(.active):hover {
 
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="btn" class="btn btn-secondary">Ok</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -187,25 +187,7 @@ label.btn-outline-warning:not(.active):hover {
                         </div>
                     </div>
 
-                    <script>
 
-                        // Получаем ссылку на элемент, где будет отображаться текст в модальном окне
-                        var modalText = document.getElementById('exampleModalLabel-{{ day }}');
-                        var modaltog = document.getElementById('event-toggle-{{ day }}');
-                        var event-check = document.getElementById('event-checkLabel-{{ day }}');
-                        var free-day-check = document.getElementById('free-day-checkLabel-{{ day }}');
-
-                        // Получаем ссылку на элемент поля ввода
-                        var modalInput = document.getElementById('modal-input-{{ day }}');
-
-                        // Устанавливаем текст в элементе модального окна
-                        modalText.innerHTML = modalInput.value;
-                        modaltog.innerHTML = modalInput.value;
-                        free-day-check.innerHTML = modalInput.value;
-                        event-check.innerHTML = modalInput.value;
-
-
-                    </script>
                     {% endif %}
 
                     {% else %}
@@ -226,6 +208,25 @@ label.btn-outline-warning:not(.active):hover {
                     {% endif %}
                     {% endif %}
                 </td>
+                <script>
+
+                        // Получаем ссылку на элемент, где будет отображаться текст в модальном окне
+                        var modalText = document.getElementById('exampleModalLabel-{{ day }}');
+                        var modaltog = document.getElementById('event-toggle-{{ day }}');
+                        var event-check = document.getElementById('event-checkLabel-{{ day }}');
+                        var free-day-check = document.getElementById('free_day_checkLabel_{{ day }}');
+
+                        // Получаем ссылку на элемент поля ввода
+                        var modalInput = document.getElementById('modal-input-{{ day }}');
+
+                        // Устанавливаем текст в элементе модального окна
+                        modalText.innerHTML = modalInput.value;
+                        modaltog.innerHTML = modalInput.value;
+                        free-day-check.innerHTML = modalInput.value;
+                        event-check.innerHTML = modalInput.value;
+
+
+                </script>
                 {% endfor %}
             </tr>
             {% endfor %}
@@ -234,11 +235,11 @@ label.btn-outline-warning:not(.active):hover {
         </table>
         {% if next_month == 1 %}
         <a href="{% url 'calendar_ym' owner=owner year=next_year month=next_month %}">
-            <button class="btn btn-primary">Next</button>
+            <button class="btn btn-primary m-2">Вперед</button>
         </a>
         {% else %}
         <a href="{% url 'calendar_ym' owner=owner year=year month=next_month %}">
-            <button class="btn btn-primary">Next</button>
+            <button class="btn btn-primary m-2">Вперед</button>
         </a>
         {% endif %}
     </div>

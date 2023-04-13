@@ -10,6 +10,7 @@ from django_filters.views import FilterView
 from Models.filters import *
 from Models.forms import *
 from Models.models import *
+from Notifications.models import Notification
 
 
 # Create your views here.
@@ -48,6 +49,9 @@ def show_model_post(request, post_id):
             comment.author_name = request.user.username
             comment.created_date = timezone.now()
             comment.save()
+            Notification.objects.create(user=post.owner,
+                                        notification_type='Новый комментарий: Модель',
+                                        text=f'У модели новый комментарий')
             return redirect('model_post', post_id=post.pk)
     else:
         comment_form = CommentForm()

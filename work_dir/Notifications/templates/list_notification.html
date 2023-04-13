@@ -6,17 +6,65 @@
     <div class="card mb-4 mb-lg-0">
         <div class="card-body p-0">
             <ul class="list-group list-group-flush rounded-3">
-                {% for notification in notifications %}
+                {% for notification in my_objects %}
                 <li class="list-group-item d-flex justify-content-between align-items-center p-3">
-                    <h5 class="mt-0">{{ notification.notification_type }}</h5>
-                    <p class="article-content">{{ notification.text }}</p>
-                    <div class="article-metadata">
-                        <small class="text-muted">{{ notification.created_at }}</small>
+                    <div class="col">
+                        <h5 class="mt-0">{{ notification.notification_type }}</h5>
+                        <p class="article-content">{{ notification.text }}</p>
+                        <div class="article-metadata">
+                            <small class="text-muted">{{ notification.created_at }}</small>
+                        </div>
                     </div>
                 </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
+    {% if my_objects.has_other_pages %}
+    <div class="d-flex justify-content-center align-items-center p-3">
+        <div class="pagination">
+            <ul class="pagination justify-content-center">
+                {% if my_objects.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1" aria-label="First">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ my_objects.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&lt;</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {% for num in my_objects.paginator.page_range %}
+                {% if my_objects.number == num %}
+                <li class="page-item active">
+                    <a class="page-link" href="#">{{ num }} <span class="sr-only">(current)</span></a>
+                </li>
+                {% elif num > my_objects.number|add:'-3' and num < my_objects.number|add:'3' %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if my_objects.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ my_objects.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&gt;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ my_objects.paginator.num_pages }}" aria-label="Last">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
 </div>
+
 {% endblock %}

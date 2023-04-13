@@ -36,42 +36,6 @@
 
 
 <script>
-
-
-
-// Открываем модальное окно с галереей при загрузке страницы
-window.addEventListener('load', function() {
-  openModal('gallery');
-});
-
-// Открываем модальное окно с фотографией или галереей
-function openModal(photoId) {
-  var modal = document.getElementById('gallery-modal');
-  var content = document.getElementById('gallery-modal-content');
-  if (photoId === 'gallery') {
-    // Загружаем галерею в модальное окно
-    fetch('/gallery/')
-      .then(function(response) {
-        return response.text();
-      })
-      .then(function(html) {
-        content.innerHTML = html;
-        modal.style.display = 'block';
-      })
-      .catch(function(error) {
-        console.error('Ошибка загрузки галереи:', error);
-      });
-  } else {
-    // Загружаем фотографию в модальное окно
-    var photo = document.getElementById('photo-' + photoId);
-    var caption = photo.querySelector('.caption').textContent;
-    var img = photo.querySelector('img');
-    content.innerHTML = '<img src="' + img.src + '" alt="' + caption + '">';
-    modal.style.display = 'block';
-  }
-}
-
-
 </script>
 {% block scripts %}
 {% endblock %}

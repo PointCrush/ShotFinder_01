@@ -4,21 +4,21 @@
 {% block content %}
 <div class="container">
     <h1>{{ project.name }}</h1>
-    <div class="row">
+    <div class="row m-1">
         <div class="col-md-4">
             <p><strong>Owner:</strong> {{ project.owner.username }}</p>
             <p><strong>City:</strong> {{ project.city }}</p>
             <p><strong>Description:</strong></p>
             <p>{{ project.description }}</p>
             <p><strong>Looking for:</strong> {{ project.looking_for.all|join:", " }}</p>
-        </div>
-        <div class="col-md-4">
             <p><strong>TFP:</strong> {{ project.tfp }}</p>
             <p><strong>Adult only:</strong> {{ project.adult_only }}</p>
             <p><strong>Price:</strong> {{ project.price }}</p>
             <p><strong>Published:</strong> {{ project.is_published }}</p>
             <p><strong>Created:</strong> {{ project.time_create }}</p>
             <p><strong>Last updated:</strong> {{ project.time_update }}</p>
+            <a href="{% url 'edit_project' project_pk=project.pk %}"><button type="button" class="btn btn-primary">Редактировать проект</button></a>
+            <a href="{% url 'delete_project' project_pk=project.pk %}"><button type="button" class="btn btn-danger btn-sm">X</button></a>
         </div>
         <div class="col-md-4">
             <p><strong>Members:</strong></p>
@@ -28,10 +28,13 @@
                 <p>{{ member.role }}: {{ member.member.owner }}</p></a>
             {% if user == project.owner %}
             <a href="{% url 'remove_from_project' project_pk=project.pk member_pk=member.pk %}">
-            <button type="button" class="btn btn-outline-danger btn-sm">Отказать в участии</button></a>
+                <button type="button" class="btn btn-outline-danger btn-sm">Отказать в участии</button>
+            </a>
             {% endif %}
             {% endwith %}
             {% endfor %}
+        </div>
+        <div class="col-md-4">
             {% if user == project.owner %}
             <p><strong>Applicants:</strong></p>
             {% for applicant in applicants %}
@@ -40,7 +43,8 @@
                 <p>{{ applicant.role }}: {{ applicant.member.owner }}</p>
             </a>
             <a href="{% url 'approve' project_pk=project.pk applicant_pk=applicant.pk %}">
-            <button type="button" class="btn btn-outline-success btn-sm">Одобрить</button></a>
+                <button type="button" class="btn btn-outline-success btn-sm">Одобрить</button>
+            </a>
             {% endwith %}
             {% endfor %}
             {% endif %}
@@ -91,6 +95,7 @@
             });
         });
     });
+
 
 </script>
 {% endblock %}

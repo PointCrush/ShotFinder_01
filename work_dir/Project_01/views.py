@@ -117,3 +117,45 @@ def remove_from_project(request, project_pk, member_pk):
     member.is_approved = False
     member.save()
     return redirect('project_detail', project_pk=project_pk)
+
+
+@login_required
+def edit_project(request, project_pk):
+    model = Project_01.objects.get(pk=project_pk)
+    if request.method == 'POST':
+        form = ProjectCreateForm(request.POST, request.FILES, instance=model)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.save()
+            return redirect('project_detail', project_pk=project_pk)
+    else:
+        form = ProjectCreateForm(instance=model)
+    return render(request, 'create_proj.html', {'form': form})
+
+
+@login_required
+def delete_project(request, project_pk):
+    project = get_object_or_404(Project_01, pk=project_pk)
+    project.delete()
+    return redirect('my_projects')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

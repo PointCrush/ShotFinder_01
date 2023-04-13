@@ -9,6 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django_filters.views import FilterView
 from django.contrib import messages
 
+from Notifications.models import Notification
 from Photographers.filters import *
 from Photographers.forms import *
 from Photographers.models import *
@@ -50,6 +51,9 @@ def show_ph_post(request, post_id):
             comment.author_name = request.user.username
             comment.created_date = timezone.now()
             comment.save()
+            Notification.objects.create(user=post.owner,
+                                        notification_type='Новый комментарий: Фотограф',
+                                        text=f'У фотографа новый комментарий')
             return redirect('ph_post', post_id=post.pk)
     else:
         comment_form = CommentForm()
