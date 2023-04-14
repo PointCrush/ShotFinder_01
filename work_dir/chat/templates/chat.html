@@ -1,22 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Chat</title>
-</head>
-<body>
-<div id="chat-log">
-    {% for message in messages %}
-    <p>{{ message.author }}: {{ message.content }}</p>
-    {% endfor %}
+{% extends 'base/base.html' %}
+
+{% block title %}Chat{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center m-3">
+    <div class="col-4">
+        <div class="card">
+            <div class="card-header">Chat Room: {{ room_name }}</div>
+            <div class="card-body m-3" id="chat-log" style="overflow-y: scroll; height: 700px;">
+                {% for message in messages %}
+                <p>{{ message.author }}: {{ message.content }}</p>
+                {% endfor %}
+            </div>
+            <div class="card-footer">
+                <div class="input-group">
+                    <input id="chat-message-input" type="text" class="form-control">
+                    <button id="chat-message-submit" class="btn btn-primary">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<input id="chat-message-input" type="text">
-<input id="chat-message-submit" type="submit" value="Send">
 
 <script>
 const roomName = "{{ room_name|escapejs }}";
 
-      const chatSocket = new WebSocket(
+const chatSocket = new WebSocket(
     'ws://' + window.location.host +
     '/ws/chat/' + roomName + '/'
 );
@@ -24,22 +33,40 @@ const roomName = "{{ room_name|escapejs }}";
 chatSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
     document.querySelector('#chat-log').innerHTML += ('<p>' + data.message + '</p>');
+    scrollToBottom();
 };
 
-document.querySelector('#chat-message-submit').onclick = function(e) {
+document.querySelector('#chat-message-submit').onclick = sendMessage;
+
+document.querySelector('#chat-message-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        sendMessage(e);
+    }
+});
+
+function sendMessage(e) {
     const messageInputDom = document.querySelector('#chat-message-input');
     const message = messageInputDom.value;
     chatSocket.send(JSON.stringify({
         'message': message
     }));
     messageInputDom.value = '';
-};
+}
 
 chatSocket.onclose = function(e) {
     console.error('Chat socket closed unexpectedly');
 };
 
+function scrollToBottom() {
+    const chatLog = document.querySelector('#chat-log');
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+// Прокручиваем до последнего сообщения при загрузке страницы
+scrollToBottom();
 
 </script>
-</body>
-</html>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

@@ -22,14 +22,14 @@ class Photographer(models.Model):
     nu_photos = models.BooleanField(default=False, verbose_name='Согласие на ню-фото (18+)')
     tfp_photos = models.BooleanField(default=False, verbose_name='Сотрудничество по ТФП', null=True)
 
-    avatar = models.ImageField(upload_to='avatar/ph/%Y/%m/%d/', blank=True, verbose_name='Фото профиля')
+    avatar = models.ImageField(upload_to='avatar/ph/%Y/%m/%d/', verbose_name='Фото профиля')
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True, verbose_name='Опубликовать')
 
-    inst = models.CharField(max_length=50, null=True)
-    vk = models.CharField(max_length=250, null=True)
-    tg = models.CharField(max_length=50, null=True)
+    inst = models.CharField(max_length=50, blank=True, null=True)
+    vk = models.CharField(max_length=250, blank=True, null=True)
+    tg = models.CharField(max_length=50, blank=True, null=True)
 
     like = models.ManyToManyField(User, blank=True, related_name='likes_ph')
 

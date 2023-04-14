@@ -7,7 +7,6 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django_filters.views import FilterView
-from django.contrib import messages
 
 from Notifications.models import Notification
 from Staff.filters import *
@@ -33,12 +32,14 @@ class StaffPage(FilterView):
 @login_required
 def show_post_staff(request, post_id):
     post = get_object_or_404(Staff, pk=post_id)
-    avatar = post.avatar.url
+    # avatar = post.avatar.url
     comments = post.get_comments()
     album_list = post.get_album_list()
     album_wall_pk = get_object_or_404(album_list, title='Стена').pk
     ph_photos = get_object_or_404(album_list, title='Стена').images.all()
     type = post.type.values_list('name', flat=True)
+    chat_room_name = 'st_' + post.owner.username + '_' + request.user.username
+
 
     # Обработка комментариев
     if request.method == 'POST':
@@ -60,7 +61,8 @@ def show_post_staff(request, post_id):
     context = {
         'ph_photos': ph_photos,
         'post': post,
-        'avatar': avatar,
+        'chat_room_name': chat_room_name,
+        # 'avatar': avatar,
         'user': request.user,
         'comment_form': comment_form,
         'comments': comments,

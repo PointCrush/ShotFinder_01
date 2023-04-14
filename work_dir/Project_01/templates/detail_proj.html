@@ -17,8 +17,10 @@
             <p><strong>Published:</strong> {{ project.is_published }}</p>
             <p><strong>Created:</strong> {{ project.time_create }}</p>
             <p><strong>Last updated:</strong> {{ project.time_update }}</p>
+            {% if project.owner == request.user %}
             <a href="{% url 'edit_project' project_pk=project.pk %}"><button type="button" class="btn btn-primary">Редактировать проект</button></a>
             <a href="{% url 'delete_project' project_pk=project.pk %}"><button type="button" class="btn btn-danger btn-sm">X</button></a>
+            {% endif %}
         </div>
         <div class="col-md-4">
             <p><strong>Members:</strong></p>
@@ -33,6 +35,13 @@
             {% endif %}
             {% endwith %}
             {% endfor %}
+            {% if user.username in members_owner %}
+            <div class="container-fluid mt-2">
+            <a href="{% url 'project_chat_room' room_name=project.pk %}">
+                <button type="button" class="btn btn-info">Чат проекта</button>
+            </a>
+            </div>
+            {% endif %}
         </div>
         <div class="col-md-4">
             {% if user == project.owner %}
@@ -87,10 +96,10 @@
                     // add any other parameters you need
                 },
                 success: function(response) {
-                    alert('Member created successfully!');
+                    alert('Заявка на участие подана!');
                 },
                 error: function(error) {
-                    alert('An error occurred while creating member.');
+                    alert('Возникла ошибка при подаче заявки.');
                 }
             });
         });

@@ -7,7 +7,7 @@ from django.utils import timezone
 # Create your models here.
 class Model(models.Model):
     owner = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
-    city = models.CharField(max_length=250, null=True, verbose_name='Город')
+    city = models.CharField(max_length=250, verbose_name='Город', null=True)
     age = models.PositiveSmallIntegerField(verbose_name='Возраст')
     GENDER_CHOICES = [
         ('M', 'Мужской'),
@@ -18,10 +18,10 @@ class Model(models.Model):
 
     height = models.PositiveSmallIntegerField(verbose_name='Рост')
     weight = models.PositiveSmallIntegerField(verbose_name='Вес')
-    bust = models.PositiveSmallIntegerField(blank=True, verbose_name='Обхват груди')
-    waist = models.PositiveSmallIntegerField(blank=True, verbose_name='Обхват талии')
-    hips = models.PositiveSmallIntegerField(blank=True, verbose_name='Обхват бедер')
-    shoe_size = models.PositiveSmallIntegerField(blank=True, verbose_name='Размер ноги')
+    bust = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Обхват груди')
+    waist = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Обхват талии')
+    hips = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Обхват бедер')
+    shoe_size = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Размер ноги')
     CLOTHING_SIZE = [
         ('XXS', 'XXS'),
         ('XS', 'XS'),
@@ -36,22 +36,22 @@ class Model(models.Model):
 
     hair_color = models.CharField(max_length=30, verbose_name='Цвет волос')
     eye_color = models.CharField(max_length=30, verbose_name='Цвет глаз')
-    tattoo = models.BooleanField(default=True, verbose_name='Наличие тату')
+    tattoo = models.BooleanField(default=False, verbose_name='Наличие тату')
     tattoo_description = models.CharField(max_length=200, blank=True,
                                           verbose_name='Если имеются тату, то на каких местах')
 
     in_under_photos = models.BooleanField(default=False, verbose_name='Согласие на фото в нижнем белье/купальнике')
     nu_photos = models.BooleanField(default=False, verbose_name='Согласие на ню-фото (18+)')
-    tfp_photos = models.BooleanField(default=False, verbose_name='Сотрудничество по ТФП', null=True)
+    tfp_photos = models.BooleanField(default=False, verbose_name='Сотрудничество по ТФП')
 
-    avatar = models.ImageField(upload_to='avatar/model/%Y/%m/%d/', blank=True, verbose_name='Фото профиля')
+    avatar = models.ImageField(upload_to='avatar/model/%Y/%m/%d/', verbose_name='Фото профиля')
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True, verbose_name='Опубликовать')
 
-    inst = models.CharField(max_length=50, null=True)
-    vk = models.CharField(max_length=250, null=True)
-    tg = models.CharField(max_length=50, null=True)
+    inst = models.CharField(max_length=50, blank=True, null=True)
+    vk = models.CharField(max_length=250, blank=True, null=True)
+    tg = models.CharField(max_length=50, blank=True, null=True)
 
     like = models.ManyToManyField(User, blank=True, related_name='likes')
 

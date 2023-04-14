@@ -34,12 +34,14 @@ class PhotographerPage(FilterView):
 @login_required
 def show_ph_post(request, post_id):
     post = get_object_or_404(Photographer, pk=post_id)
-    avatar = post.avatar.url
+    # avatar = post.avatar.url
     comments = post.get_comments()
     album_list = post.get_album_list()
     album_wall_pk = get_object_or_404(album_list, title='Стена').pk
     ph_photos = get_object_or_404(album_list, title='Стена').image_ph.all()
     genres = post.genre.values_list('name', flat=True)
+    chat_room_name = 'ph_' + post.owner.username + '_' + request.user.username
+
 
     # Обработка комментариев
     if request.method == 'POST':
@@ -61,7 +63,8 @@ def show_ph_post(request, post_id):
     context = {
         'ph_photos': ph_photos,
         'post': post,
-        'avatar': avatar,
+        'chat_room_name': chat_room_name,
+        # 'avatar': avatar,
         'user': request.user,
         'comment_form': comment_form,
         'comments': comments,

@@ -27,11 +27,11 @@ class CreateModelForm(forms.ModelForm):
             'in_under_photos': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'nu_photos': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'tfp_photos': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control', 'required': True}),
             'is_published': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'inst': forms.TextInput(attrs={'class': 'form-control'}),
-            'vk': forms.TextInput(attrs={'class': 'form-control'}),
-            'tg': forms.TextInput(attrs={'class': 'form-control'}),
+            'inst': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
+            'vk': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
+            'tg': forms.TextInput(attrs={'class': 'form-control', 'required': False}),
         }
 
 

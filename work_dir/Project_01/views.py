@@ -73,10 +73,22 @@ def upload_image(request, project_pk):
 
 
 def project_detail(request, project_pk):
+    user = request.user
     project = get_object_or_404(Project_01, pk=project_pk)
     members = project.members.filter(is_approved=True)
+    members_owner = []
+    for member in members:
+        members_owner.append(member.member.owner.username)
     applicants = project.members.filter(is_approved=False)
-    return render(request, 'detail_proj.html', {'project': project, 'members': members, 'applicants': applicants})
+    request.session['list_username_members'] = members_owner
+    return render(request, 'detail_proj.html',
+    {
+          'project': project,
+          'members': members,
+          'members_owner': members_owner,
+          'applicants': applicants,
+          'user': user
+    })
 
 
 def give_response(request):

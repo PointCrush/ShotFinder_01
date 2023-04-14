@@ -16,10 +16,10 @@ class StaffForm(forms.ModelForm):
                                           widget=forms.SelectMultiple(attrs={'class': 'form-select', 'size': '5'}))
     tfp_photos = forms.BooleanField(label='Сотрудничество по TFP',
                                     widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}), required=False)
-    avatar = forms.ImageField(label='Фото профиля', required=False,
+    avatar = forms.ImageField(label='Фото профиля', required=True,
                               widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
     is_published = forms.BooleanField(label='Опубликовать',
-                                      widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}), required=False)
+                                      widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}), required=False, initial=True)
 
     inst = forms.CharField(required=False, max_length=250, widget=forms.TextInput(attrs={'class': 'form-control'}))
     vk = forms.CharField(required=False, max_length=250, widget=forms.TextInput(attrs={'class': 'form-control'}))

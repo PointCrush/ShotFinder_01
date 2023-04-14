@@ -32,11 +32,12 @@ class ModelsPage(FilterView):
 @login_required
 def show_model_post(request, post_id):
     post = get_object_or_404(Model, pk=post_id)
-    avatar = post.avatar.url
+    # avatar = post.avatar.url
     comments = post.get_comments()
     album_list = post.get_album_list()
     album_wall_pk = get_object_or_404(album_list, title='Стена').pk
     model_photos = get_object_or_404(album_list, title='Стена').album.all()
+    chat_room_name = 'md_' + post.owner.username + '_' + request.user.username
 
 
     # Обработка комментариев
@@ -72,7 +73,8 @@ def show_model_post(request, post_id):
     context = {
         'model_photos': model_photos,
         'post': post,
-        'avatar': avatar,
+        'chat_room_name': chat_room_name,
+        # 'avatar': avatar,
         'user': request.user,
         'upload_form': upload_form,
         'comment_form': comment_form,

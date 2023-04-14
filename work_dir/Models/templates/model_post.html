@@ -52,9 +52,11 @@
             <div class="col-lg-4">
                 <div class="card mb-4">
                     <div class="card-body text-center">
+                        {% if post.avatar %}
                         <img src="{{ post.avatar.url }}"
                              alt="avatar"
                              class="rounded-3 img-fluid" style="width: 250px;">
+                        {% endif %}
                         <h5 class="my-3">{{ post.owner.first_name }} {{ post.owner.last_name }}</h5>
                         <p class="text-muted mb-4">Последний раз в сети:<br> {{ post.owner.last_login.date }}</p>
                         <!--                        <p class="text-muted mb-1">Full Stack Developer</p>-->
@@ -82,8 +84,12 @@
                         {% endif %}
                             <a href="{% url 'calendar' owner=post.owner.pk %}">
                                 <button type="button" class="btn btn-primary btn-sm m-1">Календарь модели</button>
-                            </a>                            <a href="#">
+                            </a>
+                            <a href="#">
                                 <button type="button" class="btn btn-primary btn-sm m-1">Пригласить в проект</button>
+                            </a>
+                            <a href="{% url 'personal_chat_room' owner_name=post.owner.username room_name=chat_room_name %}">
+                                <button type="button" class="btn btn-primary btn-sm m-1">Написать</button>
                             </a>
 
                         </div>

@@ -11,13 +11,13 @@ class PhForm(forms.ModelForm):
     city = forms.CharField(
         label='Город',
         max_length=250,
-        required=False,
+        required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
 
     age = forms.IntegerField(
         label='Возраст',
-        required=False,
+        required=True,
         widget=forms.NumberInput(attrs={'class': 'form-control'})
     )
 
@@ -31,7 +31,7 @@ class PhForm(forms.ModelForm):
     genre = forms.ModelMultipleChoiceField(
         label='Жанр фотосъемки',
         queryset=ShootingGenre.objects.all(),
-        required=False,
+        required=True,
         widget=forms.SelectMultiple(attrs={'class': 'form-select', 'size': '5'})
     )
 
@@ -61,7 +61,7 @@ class PhForm(forms.ModelForm):
 
     avatar = forms.ImageField(
         label='Фото профиля',
-        required=False,
+        required=True,
         widget=forms.ClearableFileInput(attrs={'class': 'form-control'})
     )
 
