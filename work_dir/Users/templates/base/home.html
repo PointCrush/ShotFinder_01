@@ -3,9 +3,8 @@
 {% block content %}
 <style>
   .icon {
-    width: 10rem;
-    height: 10rem;
     transition: all 0.2s ease-in-out;
+    color: #615676;
   }
   .icon:hover {
     transform: scale(1.1);
@@ -14,54 +13,111 @@
     font-size: 5rem;
     text-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
   }
+
 </style>
 
 <div class="container-fluid d-flex align-items-center justify-content-center mt-5">
-    <div class="container">
-        <h1 class="text-center title">ShotFinder</h1>
-        <h6 class="text-muted text-center">VISUAL ART INDUSTRY</h6>
-        <div class="row mt-5">
-            <div class="col-md-3 col-sm-6 text-center">
-                <a href="#"><i class="fas fa-camera-retro fa-5x"></i></a>
-                <h5 class="mt-3">Заголовок 1</h5>
-                <p>Обычный текст здесь.</p>
+    <div class="col">
+        <div class="container" style="height: 100vh;">
+            <div class="container" style="height: 60vh;">
+                <h1 class="display-1 mt-3">Shot Finder</h1>
+                <p class="lead">Делаем искусство доступным</p>
             </div>
-            <div class="col-md-3 col-sm-6 text-center">
-                <a href="#"><i class="fas fa-palette fa-5x"></i></a>
-                <h5 class="mt-3">Заголовок 2</h5>
-                <p>Обычный текст здесь.</p>
-            </div>
-            <div class="col-md-3 col-sm-6 text-center">
-                <a href="#"><i class="fas fa-video fa-5x"></i></a>
-                <h5 class="mt-3">Заголовок 3</h5>
-                <p>Обычный текст здесь.</p>
-            </div>
-            <div class="col-md-3 col-sm-6 text-center">
-                <a href="#"><i class="fas fa-music fa-5x"></i></a>
-                <h5 class="mt-3">Заголовок 4</h5>
-                <p>Обычный текст здесь.</p>
-            </div>
-            <div class="col-md-3 col-sm-6 text-center">
-                <a href="#"><i class="fas fa-film fa-5x"></i></a>
-                <h5 class="mt-3">Заголовок 5</h5>
-                <p>Обычный текст здесь.</p>
-            </div>
-            <div class="col-md-3 col-sm-6 text-center">
-                <a href="#"><i class="fas fa-image fa-5x"></i></a>
-                <h5 class="mt-3">Заголовок 6</h5>
-                <p>Обычный текст здесь.</p>
-            </div>
-            <div class="col-md-3 col-sm-6 text-center">
-                <a href="#"><i class="fas fa-paint-brush fa-5x"></i></a>
-                <h5 class="mt-3">Заголовок 7</h5>
-                <p>Обычный текст здесь.</p>
-            </div>
-            <div class="col-md-3 col-sm-6 text-center">
-                <a href="#"><i class="fas fa-microphone fa-5x"></i></a>
-                <h5 class="mt-3">Заголовок 8</h5>
-                <p>Обычный текст здесь.</p>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <button class="btn btn-light btn-lg btn-block scroll-about" style="opacity: 1">О нас</button>
+                    <button class="btn btn-light btn-lg btn-block scroll-site">Что может сайт</button>
+                    {% if not user.is_authenticated %}
+                    <button class="btn btn-light btn-lg btn-block scroll-register">Регистрация</button>
+                    {% endif %}
+                </div>
             </div>
         </div>
+        <div class="container" style="height: 100vh;">
+            <h1 class="text-center mt-2" style="font-style: italic">"Объединяем таланты чтобы творить вместе!"</h1>
+            <h3 class="text-muted text-center">О нас:</h3>
+            <div class="row mt-5">
+                <div class="col-6">
+                    <h4 class="mt-5 p-3">
+                        Мы, полноценная соц сеть, для людей чья сфера деятельности напрямую связана с искусством фото и
+                        видео. А также помогаем заинтересованным людям найти услуги для фотосессии и съемки видео.
+                    </h4>
+                </div>
+            </div>
+        </div>
+        {% if not user.is_authenticated %}
+        <div class="container" style="height: 75vh;">
+            <h1 class="text-center">Выберите роль в съемочном процессе которую вы хотели бы исполнять</h1>
+            <h6 class="text-muted text-center">*позже вы сможете выбрать дополнительные роли если вы талантливы в
+                нескольких областях</h6>
+            <div class="row mt-5">
+                <div class="col-md-3 col-sm-6 text-center">
+                    <a href="{% url 'register' role='md' %}"><i class="icon fas fa-person-dress-burst fa-5x"></i></a>
+                    <h5 class="mt-3">Я модель</h5>
+                    <p>Обычный текст здесь.</p>
+                </div>
+                <div class="col-md-3 col-sm-6 text-center">
+                    <a href="{% url 'register' role='ph' %}"><i class="icon fas fa-camera fa-5x"></i></a>
+                    <h5 class="mt-3">Я фотограф</h5>
+                    <p>Обычный текст здесь.</p>
+                </div>
+                <div class="col-md-3 col-sm-6 text-center">
+                    <a href="{% url 'register' role='st' %}"><i class="icon fas fa-palette fa-5x"></i></a>
+                    <h5 class="mt-3">Я стилист</h5>
+                    <p>Обычный текст здесь.</p>
+                </div>
+                <div class="col-md-3 col-sm-6 text-center">
+                    <a href="{% url 'register' role='user' %}"><i class="icon fas fa-user fa-5x"></i></a>
+                    <h5 class="mt-3">Я пользователь</h5>
+                    <p>Обычный текст здесь.</p>
+                </div>
+                <div class="col-md-3 col-sm-6 text-center">
+                    <a href="{% url 'register' role='sd' %}"><i class="icon fas fa-film fa-5x"></i></a>
+                    <h5 class="mt-3">Я студия</h5>
+                    <p>Обычный текст здесь.</p>
+                </div>
+                <div class="col-md-3 col-sm-6 text-center">
+                    <a href="#"><i class="icon fas fa-image fa-5x"></i></a>
+                    <h5 class="mt-3">Заголовок 6</h5>
+                    <p>Обычный текст здесь.</p>
+                </div>
+                <div class="col-md-3 col-sm-6 text-center">
+                    <a href="#"><i class="icon fas fa-paint-brush fa-5x"></i></a>
+                    <h5 class="mt-3">Заголовок 7</h5>
+                    <p>Обычный текст здесь.</p>
+                </div>
+                <div class="col-md-3 col-sm-6 text-center">
+                    <a href="#"><i class="icon fas fa-microphone fa-5x"></i></a>
+                    <h5 class="mt-3">Заголовок 8</h5>
+                    <p>Обычный текст здесь.</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
+
+<script>
+    // привязка функций прокрутки к кнопкам
+document.querySelector('.scroll-about').addEventListener('click', scrollToTop);
+document.querySelector('.scroll-register').addEventListener('click', scrollToBottom);
+
+// функция для прокрутки страницы вверх
+function scrollToTop() {
+  window.scrollTo({
+    top: window.innerHeight,
+    behavior: 'smooth'
+  });
+}
+
+// функция для прокрутки страницы вниз
+function scrollToBottom() {
+  window.scrollTo({
+    top: window.innerHeight * 4,
+    behavior: 'smooth'
+  });
+}
+
+
+</script>
 {% endblock %}

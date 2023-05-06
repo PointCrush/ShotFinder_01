@@ -1,0 +1,124 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Chat{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="max-width: 600px">
+<div class="row justify-content-center align-items-center m-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">{{ room_title }}</div>
+            <div class="card-body m-3" id="chat-log" style="overflow-y: scroll; height: 600px;">
+                {% for message in messages %}
+
+                <p class="position-relative">
+                {% if message.new and message.author != user %}
+                <span class="unread-message position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                    <span class="visually-hidden">New message</span>
+                </span>
+                <script>
+                    setTimeout(function() {
+                        const message_pk = {{ message.pk }};
+
+                        fetch(`/chat/is_reading_personal_message/${parseInt(message_pk)}/`, {
+                          method: 'GET',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                        })
+
+                        .then(response => response.json())
+                        .then(data => console.log(data))
+                        .catch(error => console.error(error));
+
+                        const alert = document.querySelector('.unread-message');
+                        alert.remove();
+
+                    }, 1500);
+                </script>
+                {% endif %}
+
+                    {{ message.author }}: {{ message.content }}</p>
+
+                {% endfor %}
+
+                <script>
+                    setTimeout(function() {
+                        const alert = document.querySelector('.unread-message');
+                        alert.remove();
+                                            }, 1500);
+                </script>
+
+            </div>
+            <div class="card-footer">
+                <div class="input-group">
+                    <input id="chat-message-input" type="text" class="form-control">
+                    <button id="chat-message-submit" class="btn main-btn">Отправить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+const roomName = "{{ room_name|escapejs }}";
+
+const chatSocket = new WebSocket(
+    'ws://' + window.location.host +
+    '/ws/personal_chat/' + roomName + '/'
+);
+
+chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    document.querySelector('#chat-log').innerHTML += ('<p>' + data.message + '</p>');
+    scrollToBottom();
+};
+
+document.querySelector('#chat-message-submit').onclick = sendMessage;
+
+document.querySelector('#chat-message-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        sendMessage(e);
+    }
+});
+
+function sendMessage(e) {
+    const messageInputDom = document.querySelector('#chat-message-input');
+    const message = messageInputDom.value;
+    chatSocket.send(JSON.stringify({
+        'message': message
+    }));
+    messageInputDom.value = '';
+}
+
+chatSocket.onclose = function(e) {
+    console.error('Chat socket closed unexpectedly');
+};
+
+function scrollToBottom() {
+    const chatLog = document.querySelector('#chat-log');
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+// Прокручиваем до последнего сообщения при загрузке страницы
+scrollToBottom();
+
+// Получаем координаты первого непрочитанного сообщения
+function scrollToUnreadMessage() {
+  const chatLog = document.querySelector('#chat-log');
+  const lastUnreadMessage = document.querySelector('.unread-message');
+  if (lastUnreadMessage) {
+    lastUnreadMessage.scrollIntoView();
+  } else {
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+}
+
+// Прокручиваем страницу до первого непрочитанного сообщения
+scrollToUnreadMessage();
+</script>
+{% endblock %}
+
+{% block extra_js %}
+{% endblock %}

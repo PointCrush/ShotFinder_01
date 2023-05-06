@@ -1,6 +1,7 @@
 import datetime
 import calendar
 
+from allauth.account.decorators import verified_email_required
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
@@ -25,7 +26,7 @@ ru_months = {
 }
 
 
-@login_required
+@verified_email_required
 def calendar_view(request, owner,  year=None, month=None):
     event_list = Event.objects.filter(owner=owner)
 

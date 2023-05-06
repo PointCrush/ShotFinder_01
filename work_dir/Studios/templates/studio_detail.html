@@ -1,0 +1,143 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-sm-11">
+        <div class="card border mt-5 overflow-hidden" style="box-shadow: 2px 2px 5px 2px rgba(30, 27, 75, 0.3)">
+            <div class="row">
+                <div class="col-xl-6 col-xxl-6 col-sm-12">
+                <div class="container-fluid mb-4 rounded-bottom" style="height: 150px; box-shadow: 1px 1px 15px 2px rgba(30, 27, 75, 0.2); background-color: #e0e7ff">
+                    <div class="row">
+                     <div class="p-0 rounded-circle overflow-hidden ms-3 mt-2 border border-4 shadow" style="width: 130px; height: 130px">
+                         {% if studio.logo %}
+                         <img src="{{ studio.logo.url }}" class="h-100 w-100" style="object-fit: cover;">
+                         {% else %}
+                         <img src="https://pbs.twimg.com/profile_images/578844000267816960/6cj6d4oZ_400x400.png" class="h-100 w-100" style="object-fit: cover;">
+                         {% endif %}
+                     </div>
+                        <div class="col-4">
+                            <h2 class="mt-5">{{ studio.title }}</h2>
+                            <h6>{{ studio.city }}</h6>
+                        </div>
+                        <div class="col-4 mt-5 p-2">
+                            <p class="m-0"><strong>Номер: </strong>{{ studio.telephone_number }}</p>
+                            <p class="m-0"><strong>E-mail: </strong>{{ studio.mail }}</p>
+                            <p class="m-0"><strong>Адрес: </strong>{{ studio.address }}</p>
+                        </div>
+                    </div>
+                </div>
+                    <div class="accordion accordion-flush" id="accordionPanelsStayOpenExample">
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                            О студии:
+                          </button>
+                        </h2>
+                        <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                          <div class="accordion-body" style="background-color: #eef2ff">{{ studio.description }}</div>
+                        </div>
+                      </div>
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                            Как добраться:
+                          </button>
+                        </h2>
+                        <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                          <div class="accordion-body" style="background-color: #eef2ff">{{ studio.way }}</div>
+                        </div>
+                      </div>
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                            Цены:
+                          </button>
+                        </h2>
+                        <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                          <div class="accordion-body" style="background-color: #eef2ff">{{ studio.price }}</div>
+                        </div>
+                      </div>
+                        <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseThree">
+                            График работы:
+                          </button>
+                        </h2>
+                        <div id="flush-collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                          <div class="accordion-body" style="background-color: #eef2ff">{{ studio.schedule }}</div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-xxl-6 col-sm-12">
+                    <div class="container-fluid p-2 pe-3">
+                        <div class="container-fluid text-center mb-2">
+                            <a href="{% url 'edit_studio' studio_pk=studio.pk %}" class="btn main-btn btn-sm">Редактировать</a>
+                            <a href="{% url 'studio_photo_editor' studio_pk=studio.pk %}" class="btn main-btn btn-sm">Фотографии</a>
+<!--                            <a href="{% url 'delete_studio' studio_pk=studio.pk %}" class="btn btn-danger btn-sm">Удалить</a>-->
+                                              <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModalDelete">
+                  Удалить
+                  </button>
+                                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalDelete" tabindex="-1" aria-labelledby="exampleModalDelete" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabelDelete">Удалить студию</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body text-start">
+                            <h6>Вы действительно хотите удалить студию?</h6>
+                            <small>После удаления восстановление будет невозможно!<br></small>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                                        <a href="{% url 'delete_studio' studio_pk=studio.pk %}" class="btn btn-danger">Удалить</a>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                        </div>
+                        <div class="row border rounded shadow" style="background-color: #e0e7ff">
+                            {% if studio.photos %}
+                            {% for i in studio.photos.all %}
+                            <div class="col-xxl-3 col-6 col-sm-4 p-1">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal{{ forloop.counter0 }}">
+                                <img src="{{ i.image.url }}" class="h-100 w-100 rounded" style="object-fit: cover; max-height: 300px">
+                                </a>
+                            </div>
+
+                              <!-- Modal -->
+                            <div class="modal fade" id="exampleModal{{ forloop.counter0 }}" tabindex="-1" aria-labelledby="exampleModalLabel{{ forloop.counter0 }}" aria-hidden="true">
+                              <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                  <div class="modal-body p-0">
+                                    <img src="{{ i.image.url }}" class="h-100 w-100" style="object-fit: cover;">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <h4>Фотографий нет</h4>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// JavaScript-функция для открытия следующего модального окна
+function showNextModal() {
+  var currentModalId = $('#exampleModal').attr('id');
+  var currentModalNum = parseInt(currentModalId.replace('exampleModal', ''));
+  var nextModalNum = currentModalNum + 1;
+  var nextModalId = '#exampleModal' + nextModalNum;
+  $(nextModalId).modal('show');
+}
+</script>
+{% endblock %}

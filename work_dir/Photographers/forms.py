@@ -104,16 +104,19 @@ class CommentForm(forms.ModelForm):
         model = CommentPh
         fields = ('text',)
         widgets = {
-            'text': forms.Textarea(attrs={'rows': 3}),
+            'text': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
         }
 
 
 class AlbumForm(forms.ModelForm):
     class Meta:
         model = AlbumPh
-        fields = ['title', ]
+        fields = ['title']
         labels = {
             'title': 'Добавить альбом',
+        }
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 

@@ -1,0 +1,74 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-5 col-md-8 col-sm-10 m-1">
+        <div class="card mt-4 shadow">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h5 class="card-title">
+                        {{ user.get_full_name }}
+                    </h5>
+                    {% if user.model and user.photographer and user.staff %}
+                    {% else %}
+                    <div class="dropdown">
+                        <button class="btn btn-light btn-sm dropdown-toggle ms-5" type="button"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            Добавить
+                        </button>
+                        <ul class="dropdown-menu">
+                            {% if not user.model %}
+                            <li><a class="dropdown-item" href="{% url 'create_model' %}">Модель</a></li>
+                            {% endif %}
+                            {% if not user.photographer %}
+                            <li><a class="dropdown-item" href="{% url 'create_ph' %}">Фотограф</a></li>
+                            {% endif %}
+                            {% if not user.staff %}
+                            <li><a class="dropdown-item" href="{% url 'create_staff' %}">Стилист</a></li>
+                            {% endif %}
+                            {% if not user.haveshots %}
+                            <hr>
+                            <li><a class="dropdown-item" href="{% url 'create_staff' %}">Студия</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                        <a href="{% url 'edit_profile' %}">
+                        <button class="btn btn-light btn-sm ms-5">
+                            Редактировать данные
+                        </button></a>
+                </div>
+                <hr>
+
+                <ul class="list-unstyled">
+                    {% if user.model %}
+                    <li>
+                        <a href="{% url 'model_post' post_id=user.model.pk %}"><p class="m-3">
+                            перейти на страницу модели -->
+                        </p></a>
+                        <hr>
+                    </li>
+                    {% endif %}
+                    {% if user.photographer %}
+                    <li>
+                        <a href="{% url 'ph_post' post_id=user.photographer.pk %}"><p class="m-3">
+                            перейти на страницу фотографа -->
+                        </p></a>
+                        <hr>
+                    </li>
+                    {% endif %}
+                    {% if user.staff %}
+                    <li>
+                        <a href="{% url 'ph_post' post_id=user.photographer.pk %}"><p class="m-3">
+                            перейти на страницу стлиста -->
+                        </p></a>
+                        <hr>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-11">
+        <div class="container-fluid mt-4 border rounded p-3">
+            <div class="row">
+                <div class="col-4">
+                    <h1>Студия: {{ studio.title }}</h1>
+                </div>
+                <div class="col-4 text-center mt-2">
+                <button type="button" class="btn main-btn" data-bs-toggle="modal"
+                        data-bs-target="#uploadModal">Загрузить фотографии
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade modal" id="uploadModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5 modal-m11" id="exampleModalLabel">Загрузить
+                                    фотографии</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div id="thumbnails"></div>
+                                        {{ upload_form.as_p }}
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                            <button type="submit" class="btn main-btn">Загрузить</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModalDelete">
+                  Удалить
+                  </button>
+                                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalDelete" tabindex="-1" aria-labelledby="exampleModalDelete" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabelDelete">Удалить фотографии</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body text-start">
+                            <h6>Вы действительно хотите удалить фотографии?</h6>
+                            <small>После удаления восстановление будет невозможно!<br></small>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            <button type="button" class="btn btn-danger" onclick="deleteSelected()">Удалить</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div><hr>
+            <form id="delete-form" method="post">
+                {% csrf_token %}
+                <div class="row row-cols-3 row-cols-md-4 row-cols-lg-6 g-3 mt-3">
+                    {% for photo in studio.photos.all %}
+                    <div class="col">
+                        <img src="{{ photo.image.url }}" class="rounded w-100 h-100" alt="{{ photo.title }}"
+                             style="max-height: 350px; object-fit: cover;"
+                             data-id="{{ photo.pk }}" onclick="selectPhoto(event)">
+                    </div>
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script>
+  // Удаление
+    function deleteSelected() {
+        const form = document.getElementById('delete-form');
+        const csrftoken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '{% url "studio_delete_photos" %}');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.setRequestHeader('X-CSRFToken', csrftoken);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                window.location.reload();
+            }
+        };
+        xhr.send(JSON.stringify(selectedPhotos));
+    }
+
+
+  // Выбор и перемещение фотографий в альбомы
+const albumDropdown = document.querySelector('#album-dropdown');
+const moveToAlbumBtn = document.querySelector('#move-to-album-btn');
+const movePhotosForm = document.getElementById("move-photos-form");
+let selectedPhotos = [];
+
+function selectPhoto(event) {
+  const photoId = event.target.getAttribute('data-id');
+  if (selectedPhotos.includes(photoId)) {
+    selectedPhotos.splice(selectedPhotos.indexOf(photoId), 1);
+    event.target.classList.remove('border', 'border-primary', 'border-3');
+  } else {
+    selectedPhotos.push(photoId);
+    event.target.classList.add('border', 'border-primary', 'border-3');
+  }
+}
+
+
+
+</script>
+
+{% endblock %}

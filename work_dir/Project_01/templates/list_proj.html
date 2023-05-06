@@ -4,7 +4,7 @@
 <style>
 img {
       width: 100%;
-      height: 100%;
+      height: 200px;
       object-fit: cover;
     }
 
@@ -24,62 +24,77 @@ img {
         <div class="col-md-3 col-lg-2 filter-container mt-3">
             <form method="get">
                 {{ filter.form.as_p }}
-                <button type="submit" class="btn btn-primary mt-2">Фильтр</button>
+                <button type="submit" class="btn main-btn mt-2">Фильтр</button>
             </form>
         </div>
         <div class="col-md-9 col-lg-10">
-                <div class="row">
+            <div class="row justify-content-center m-3">
+                <h1 class="text-center">Проекты</h1>
+                <h5 class="text-center text-muted" style="font-style: italic">простой способ найти единомышленников для реализации вашей идеи</h5>
+            </div>
+                <div class="row justify-content-center">
             {% for project in filter.qs %}
-        <div class="col-md-5 col-lg-6">
-            <div class="card m-3 cl shadow">
+        <div class="col-xl-9 col-mb-10 col-sm-11 col-11">
+            <div class="card m-3 shadow">
                 <div class="row">
                     <div class="col-3">
-                        <p class="text-center">{{ project.owner}}</p>
+                        <h6 class="text-start mt-2 ms-4">{{ project.owner}}</h6>
                     </div>
                     <div class="col-6">
                         <h3 class="text-center">{{ project.name }}</h3>
                     </div>
                     <div class="col-3">
                         {% if project.tfp %}
-                        <p class="text-center">ТфП проект</p>
+                        <h6 class="text-center mt-2 me-3">ТфП проект</h6>
                         {% else %}
-                        <p class="text-center">Коммерческий проект</p>
+                        <h6 class="text-center mt-2 me-3">Коммерческий проект</h6>
                         {% endif %}
                     </div>
                 </div>
 
                 <div class="row">
 
-                    <div class="col-6">
+                    <div class="col-xxl-4 col-lg-5 col-sm-12">
                         <div class="card m-3 p-0 ov-f">
                             <div class="row p-0 m-0">
+                                {% if project.references.all %}
                                 {% for image in project.references.all %}
                                 <div class="col-4 p-0">
                                     <img src='{{ image.image.url }}' class="img">
                                 </div>
                                 {% endfor %}
+                                {% else %}
+                                <h4 class="text-center">Хост не добавил референсы</h4>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-6">
-                        <div class="container mt-3 p-2">
+                    <div class="col-xxl-8 col-lg-7 col-sm-12 mb-3 mt-3">
+
+                        <div class="row">
+                        <div class="col-6 ms-2">
+
 
                         <p><strong>Город:</strong> {{ project.city }}</p>
                         <p><strong>Ищу:</strong> {{ project.looking_for.all|join:", " }}</p>
-                        <p><strong>О проекте:</strong> {{ project.description|slice:":100" }}...</p>
-                        {% if project.price %}
-                        <p><strong>Price:</strong> {{ project.price }}</p>
-                        {% endif %}
-                        <p><strong>Last updated:</strong> {{ project.time_update }}</p>
-                        <p><strong>Created:</strong> {{ project.time_create }}</p>
+                        <p><strong>О проекте:</strong> {{ project.description|slice:":300" }}...</p>
+                        </div>
+                        <div class="col-5 ms-2">
 
+                        {% if project.price %}
+                        <p><strong>Прайс:</strong> {{ project.price|slice:":100" }}...</p>
+                        {% endif %}
+                        <p><strong>Создано:</strong> {{ project.time_create }}</p>
+                        </div>
+
+                    <a href="{% url 'project_detail' project_pk=project.pk %}"><button class="btn main-btn ms-2">Подробнее</button></a>
                     </div>
-                    <a href="{% url 'project_detail' project_pk=project.pk %}"><button class="btn btn-primary">Подробнее</button></a>
                     </div>
                 </div>
 
             </div>
+                    <hr class="" style="color: #2e1065; margin-top: 35px">
             </div>
             {% endfor %}
         </div>

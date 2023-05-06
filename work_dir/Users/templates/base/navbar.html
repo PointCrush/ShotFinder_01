@@ -1,24 +1,31 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg" style=" z-index: 100;">
     <div class="container-fluid">
-        <a class="navbar-brand" href="{% url 'home' %}">ShotFinder</a>
+        <a style="opacity: 0.6;" class="navbar-brand col-951" href="{% url 'home' %}">ShotFinder</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'models' %}">Модели</a>
+                <li class="nav-item" style="opacity: 0.6;">
+                    <a class="nav-link col-951" href="{% url 'models' %}">Модели</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'photographers' %}">Фотографы</a>
+                <li class="nav-item" style="opacity: 0.6;">
+                    <a class="nav-link col-951" href="{% url 'photographers' %}">Фотографы</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'staff' %}">Стилисты</a>
+                <li class="nav-item" style="opacity: 0.6;">
+                    <a class="nav-link col-951" href="{% url 'staff' %}">Стилисты</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'project_list' %}">Проекты</a>
+                <li class="nav-item" style="opacity: 0.6;">
+                    <a class="nav-link col-951" href="{% url 'project_list' %}">Проекты</a>
                 </li>
+                <li class="nav-item" style="opacity: 0.6;">
+                    <a class="nav-link col-951" href="{% url 'all_locations' %}">Локации</a>
+                </li>
+                <li class="nav-item" style="opacity: 0.6;">
+                    <a class="nav-link col-951" href="{% url 'list_studios' %}">Студии</a>
+                </li>
+
             </ul>
 
             {% if user.is_authenticated %}
@@ -29,24 +36,41 @@
                         {{ user.username }}
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'profile' %}">Личный кабинет</a></li>
-                        <li><a class="dropdown-item" href="{% url 'my_projects' %}">Мои проекты</a></li>
-                        <li><a class="dropdown-item" href="{% url 'liked_models' %}">Избранное</a></li>
-                        <li><a class="dropdown-item" href="{% url 'calendar' owner=user.pk  %}">Календарь</a></li>
-                        <li><a class="dropdown-item" href="{% url 'list_notification' %}">Уведомления</a></li>
+                        {% if user.haveshots %}
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user"></i>  Личный кабинет</a></li>
+                        <li class="position-relative" id="liMessage"><a class="dropdown-item" href="{% url 'my_chat_list' %}"><i class="fa-solid fa-comments"></i>  Сообщения</a></li>
+                        <li class="position-relative" id="liProject"><a class="dropdown-item" href="{% url 'my_projects' %}"><i class="fa-solid fa-users"></i> Мои проекты</a></li>
+                        <li><a class="dropdown-item" href="{% url 'liked_models' %}"><i class="fa-solid fa-heart"></i> Избранное</a></li>
+                        <li><a class="dropdown-item" href="{% url 'calendar' owner=user.pk  %}"><i class="fa-solid fa-calendar-days"></i> Календарь</a></li>
+<!--                        <li class="position-relative" id="liAlerts"><a class="dropdown-item" href="{% url 'list_notification' %}"><i class="fa-solid fa-message"></i> Уведомления</a></li>-->
+                        <li class="position-relative" id="liInvitations"><a class="dropdown-item" href="{% url 'list_invite' %}"><i class="fa-solid fa-address-card"></i> Приглашения</a></li>
+                        <li><a class="dropdown-item" href="{% url 'my_locations' %}"><i class="fa-solid fa-image"></i> Локации</a></li>
+                        {% elif user.havestudio %}
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user"></i>  Личный кабинет</a></li>
+                        <li class="position-relative" id="liMessage"><a class="dropdown-item" href="{% url 'my_chat_list' %}"><i class="fa-solid fa-comments"></i>  Сообщения</a></li>
+                        <li class="position-relative" id="liProject"><a class="dropdown-item" href="{% url 'my_projects' %}"><i class="fa-solid fa-users"></i> Мои проекты</a></li>
+                        <li><a class="dropdown-item" href="{% url 'liked_models' %}"><i class="fa-solid fa-heart"></i> Избранное</a></li>
+                        <li><a class="dropdown-item" href="{% url 'calendar' owner=user.pk  %}"><i class="fa-solid fa-calendar-days"></i> Календарь</a></li>
+                        <li><a class="dropdown-item" href="{% url 'my_locations' %}"><i class="fa-solid fa-image"></i> Локации</a></li>
+                        <li><a class="dropdown-item" href="{% url 'my_studios' %}"><i class="fa-solid fa-camera"></i> Студии</a></li>
+                        {% else %}
+                        <li><a class="dropdown-item" href="{% url 'profile' %}"><i class="fa-solid fa-user"></i>  Личный кабинет</a></li>
+                        <li class="position-relative" id="liMessage"><a class="dropdown-item" href="{% url 'my_chat_list' %}"><i class="fa-solid fa-comments"></i>  Сообщения</a></li>
+                        <li><a class="dropdown-item" href="{% url 'liked_models' %}"><i class="fa-solid fa-heart"></i> Избранное</a></li>
+                        {% endif %}
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'logout' %}">Выйти</a>
+                    <a style="opacity: 0.6;" class="nav-link active" aria-current="page" href="{% url 'account_logout' %}">Выйти</a>
                 </li>
             </ul>
             {% else %}
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'register' %}">Регистрация</a>
+                    <a style="opacity: 0.6;" class="nav-link" href="{% url 'account_signup' %}">Регистрация</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'login' %}">Войти</a>
+                <li class="nav-item" style="opacity: 0.6;">
+                    <a class="nav-link active" aria-current="page" href="{% url 'account_login' %}">Войти</a>
                 </li>
             </ul>
             {% endif %}

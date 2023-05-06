@@ -1,0 +1,119 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<style>
+    .carousel {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+}
+
+.carousel img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+}
+
+
+
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xxl-2 col-mb-4 filter-container mt-3">
+            <form method="get">
+                {{ filter.form.as_p }}
+                <button type="submit" class="btn main-btn mt-2">Фильтр</button>
+            </form>
+        </div>
+        <div class="col-xxl-10 col-mb-8 p-4">
+            <div class="row justify-content-center">
+                <h1 class="text-center mt-3">Локации</h1>
+                <h5 class="text-center text-muted" style="font-style: italic">места вышего города которые по достоинству
+                    оценици другие специалисты</h5>
+                <a class="text-center" href="{% url 'create_location' %}">
+                    <button class="btn main-btn m-2">Добавить локацию</button>
+                </a>
+
+                {% for loc in filter.qs %}
+
+                <div class="col-xxl-4 col-lg-6 col-md-8 col-sm-10 p-3">
+                    <div id="carouselExample{{ loc.pk }}" class="carousel slide rounded relative shadow border">
+                        <div class="carousel-indicators" style="position: absolute; bottom: -8px;">
+                            {% if loc.photos.all %}
+                            {% for image in loc.photos.all %}
+                            {% if image == loc.photos.all.first %}
+
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ forloop.counter0 }}"
+                                    class="active" aria-current="true" aria-label="Slide 1"></button>
+
+                            {% else %}
+
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ forloop.counter0 }}"
+                                    aria-label="Slide 2"></button>
+
+                            {% endif %}
+                            {% endfor %}
+
+                            {% else %}
+                            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0"
+                                    class="active" aria-current="true" aria-label="Slide 1"></button>
+                            {% endif %}
+                        </div>
+                        <div class="carousel-inner">
+                            <div class="pt-2 ps-2 z-1"
+                                 style="position: absolute; bottom: 0; width: 100%; height: 70px;">
+                                <h5 class="p-0 m-0" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5); color: white">{{ loc.title }}</h5>
+                                <p style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5); color: white">{{ loc.city }}</p>
+                            </div>
+
+                            {% if loc.photos.all %}
+                            {% for image in loc.photos.all %}
+                            {% if image == loc.photos.all.first %}
+
+                            <div class="carousel-item active relative">
+                                <a href="{% url 'locations_detail' loc_pk=loc.pk %}">
+                                <img src="{{ image.image.url }}" class="img-fluid" alt="...">
+                                </a>
+                            </div>
+
+                            {% else %}
+
+                            <div class="carousel-item relative">
+                                <a href="{% url 'locations_detail' loc_pk=loc.pk %}">
+                                <img src="{{ image.image.url }}" class="img-fluid" alt="...">
+                                </a>
+                            </div>
+
+                            {% endif %}
+                            {% endfor %}
+
+                            {% else %}
+                            <div class="carousel-item active relative">
+                                <a href="{% url 'locations_detail' loc_pk=loc.pk %}">
+                                <img src="https://img.freepik.com/free-photo/bridge-to-pier-at-rawai-beach-phuket-thailand_554837-595.jpg?w=1380&t=st=1683276927~exp=1683277527~hmac=0bfd9a0662c637b9e5c27c1a72d5e6fa50ddd35e50ccbd9fdc20176d628d90d2"
+                                     class="img-fluid" alt="...">
+                                </a>
+                            </div>
+                            {% endif %}
+
+                        </div>
+                        <button class="carousel-control-prev" type="button"
+                                data-bs-target="#carouselExample{{ loc.pk }}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button"
+                                data-bs-target="#carouselExample{{ loc.pk }}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

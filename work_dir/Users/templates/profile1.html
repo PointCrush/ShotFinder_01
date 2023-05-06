@@ -1,0 +1,127 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<style>
+        .gallery {
+      padding: 5px
+    }
+    .gallery img {
+      height: 100px;
+      object-fit: cover;
+    }
+</style>
+
+<div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-lg-9 col-xl-7">
+            <div class="card">
+                <div class="rounded-top text-white d-flex flex-row"
+                     style="background-color: #4f46e5; height:200px; opacity: 0.6">
+                    <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                        <i class="fa-solid fa-user mt-4 mb-4 ms-4"
+                           style="color: #ffffff; font-size: 120px; width: 120px;"></i>
+                        <a href="{% url 'edit_profile' %}" type="button" class="btn btn-light main-btn"
+                           data-mdb-ripple-color="dark"
+                           style="z-index: 1;">
+                            Сменить имя
+                        </a>
+                    </div>
+                    <div class="ms-3" style="margin-top: 130px;">
+                        <h5>{{ user.get_full_name}}</h5>
+                        <p>{{user.username}}</p>
+                    </div>
+                </div>
+                <div class="p-3 text-black" style="background-color: #f8f9fa;">
+                    <div class="d-flex justify-content-end text-center">
+                        <div>
+                            <div class="dropdown">
+                                <button class="btn btn-light dropdown-toggle" type="button" style=""
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    Создать карточку
+                                </button>
+                                <ul class="dropdown-menu">
+                                    {% if not user.havestudio %}
+                                    {% if not user.model %}
+                                    <li><a class="dropdown-item" href="{% url 'create_model' %}">Модель</a></li>
+                                    {% endif %}
+                                    {% if not user.photographer %}
+                                    <li><a class="dropdown-item" href="{% url 'create_ph' %}">Фотограф</a></li>
+                                    {% endif %}
+                                    {% if not user.staff %}
+                                    <li><a class="dropdown-item" href="{% url 'create_staff' %}">Стилист</a></li>
+                                    {% endif %}
+                                    {% endif %}
+                                    {% if not user.haveshots %}
+                                    <hr>
+                                    <li><a class="dropdown-item" href="{% url 'create_studio' %}">Студия</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                        <div>
+                            <a class="btn btn-light" href="{% url 'account_change_password' %}">Сменить пароль</a>
+                        </div>
+                        <div>
+                            <a class="btn btn-light" href="{% url 'account_email' %}">Сменить e-mail</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4 text-black">
+                    <div class="">
+                        <p class="lead fw-normal mb-1">Shot's</p>
+                        <div class="p-4" style="background-color: #f8f9fa;">
+                            <div class="row">
+                                    {% if user.model %}
+                            <div class="col-lg-2 col-sm-4 col-6 text-center gallery">
+                            <a href="{% url 'model_post' post_id=user.model.pk %}" class="font-italic mb-1">
+                            <img class="img-fluid rounded p-1 border" src="{{ user.model.avatar.url }}" >
+                                Модель</a><br></div>
+                                    {% endif %}
+                                    {% if user.photographer %}
+                            <div class="col-lg-2 col-sm-4 col-6 text-center gallery">
+                            <a href="{% url 'ph_post' post_id=user.photographer.pk %}" class="font-italic mb-1">
+                            <img class="img-fluid rounded p-1 border" src="{{ user.photographer.avatar.url }}" >
+                                Фотограф</a><br></div>
+                                    {% endif %}
+                                    {% if user.staff %}
+                            <div class="col-lg-2 col-sm-4 col-6 text-center gallery">
+                            <a href="{% url 'post_staff' post_id=user.staff.pk %}" class="font-italic mb-1">
+                            <img class="img-fluid rounded p-1 border" src="{{ user.staff.avatar.url }}" >
+                                Стилист</a><br></div>
+                                    {% endif %}
+                                {% if studios %}
+                                {% for studio in studios %}
+                                <div class="col-lg-2 col-sm-4 col-6 text-center gallery">
+                            <a href="{% url 'studio_detail' studio_pk=studio.pk %}" class="font-italic mb-1">
+                                {% if studio.logo %}
+                            <img class="img-fluid rounded p-1 border" src="{{ studio.logo.url }}" >
+                                {% else %}
+                                <img class="img-fluid rounded p-1 border" src="https://pbs.twimg.com/profile_images/578844000267816960/6cj6d4oZ_400x400.png" >
+                                {% endif %}
+                                {{ studio.title }}</a><br></div>
+                                {% endfor %}
+                                {% endif %}
+
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4 text-black">
+                    <div class="">
+                        <p class="lead fw-normal mb-1">Мои проекты</p>
+                        <div class="p-4" style="background-color: #f8f9fa;">
+                            {% for p in user.projects.all %}
+                            <div class="row">
+                                <a href="{% url 'project_detail' project_pk=p.pk %}">{{ p }}</a>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

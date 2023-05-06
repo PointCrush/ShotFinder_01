@@ -1,0 +1,22 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-xl-6 col-md-10 col-11">
+    <div class="container text-center" style="max-width: 500px">
+        <a class="btn main-btn text-center" href="{% url 'create_location' %}">Добавить локацию</a>
+    </div>
+        {% for loc in locations %}
+        <a class="nav-link" href="{% url 'locations_detail' loc_pk=loc.pk %}">
+            <div class="card m-3 p-3">
+                <h4>{{ loc.title }}</h4>
+                <h6>{{ loc.city }}</h6>
+                <small class="mute">{{ loc.time_create }}</small>
+            </div>
+            </a>
+        {% empty %}
+            <h3 class="text-center">Список пуст</h3>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

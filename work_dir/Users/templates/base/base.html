@@ -13,30 +13,120 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://kit.fontawesome.com/65606f4123.css" crossorigin="anonymous">
     <link type="text/css" href="{% static 'css/main.css' %}" rel="stylesheet"/>
-
-
-
-
+    <link type="text/css" href="{% static 'css/my_css.css' %}" rel="stylesheet"/>
     {% block styles %}
     {% endblock %}
 
+<!--<style>-->
+<!--    .gradient-custom-2 {-->
+<!--/* fallback for old browsers */-->
+<!--background: #fbc2eb;-->
+
+<!--/* Chrome 10-25, Safari 5.1-6 */-->
+<!--background: -webkit-linear-gradient(to right, rgba(245, 243, 255, 1), rgba(221, 214, 254, 1));-->
+
+<!--/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */-->
+<!--background: linear-gradient(to right, rgba(245, 243, 255, 1), rgba(221, 214, 254, 1))-->
+<!--}-->
+<!--</style>-->
+
+<style>
+    .main-btn {
+  background-color: #818cf8;
+  color: white;
+  opacity: 0.9;
+<!--  border-radius: 15px-->
+}
+
+.main-btn:hover {
+  background-color: #818cf8;
+  color: white;
+  opacity: 0.85;
+}
+
+input[type="checkbox"]:checked {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+}
+
+</style>
 
 </head>
 <body>
+<div class="page">
+
 {% include 'base/navbar.html' %}
 
 {% block content %}
 {% endblock %}
 
+{% include 'base/footer.html' %}
+
+</div>
 
 <script src="https://kit.fontawesome.com/65606f4123.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
         crossorigin="anonymous"></script>
 
-
+{% if user.is_authenticated %}
 <script>
+// Check changes
+function checkForChanges() {
+  var xhr = new XMLHttpRequest();
+  var url = '/get_changes/';
+  xhr.open('GET', url, true);
+
+  xhr.onload = function() {
+    if (this.status === 200) {
+      var response = JSON.parse(this.responseText);
+      for (let i = 0; i < response.length; i++) {
+        if (i === 1) {
+          if (response[i] === 1) {
+            var button = document.getElementById('liProject');
+            var span = document.createElement('span');
+            span.className = 'position-absolute top-50 start-100 translate-middle p-2 bg-danger border border-light rounded-circle';
+            var spanInner = document.createElement('span');
+            spanInner.className = 'visually-hidden';
+            spanInner.innerText = 'New alerts';
+            span.appendChild(spanInner);
+            button.appendChild(span);
+          }
+        } else if (i === 0) {
+          if (response[i] === 1) {
+            var button = document.getElementById('liMessage');
+            var span = document.createElement('span');
+            span.className = 'position-absolute top-50 start-100 translate-middle p-2 bg-danger border border-light rounded-circle';
+            var spanInner = document.createElement('span');
+            spanInner.className = 'visually-hidden';
+            spanInner.innerText = 'New alerts';
+            span.appendChild(spanInner);
+            button.appendChild(span);
+          }
+        } else if (i === 3) {
+          if (response[i] === 1) {
+            var button = document.getElementById('liInvitations');
+            var span = document.createElement('span');
+            span.className = 'position-absolute top-50 start-100 translate-middle p-2 bg-danger border border-light rounded-circle';
+            var spanInner = document.createElement('span');
+            spanInner.className = 'visually-hidden';
+            spanInner.innerText = 'New alerts';
+            span.appendChild(spanInner);
+            button.appendChild(span);
+          }
+        }
+      }
+    }
+  };
+
+  xhr.send();
+}
+
+    checkForChanges();
+    setInterval(checkForChanges, 5000);
 </script>
+{% endif %}
+
 {% block scripts %}
 {% endblock %}
 {% block javascript %}

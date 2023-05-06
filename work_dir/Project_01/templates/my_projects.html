@@ -2,28 +2,87 @@
 
 
 {% block content %}
-<div class="container col-3 mt-5">
+<div class="container col-10 col-xxl-4 col-xl-5 col-lg-6 col-mb-8 col-sm-10 mt-5">
+    <h4 class="text-center">Мои проекты:</h4>
     <div class="card mb-4 mb-lg-0">
         <div class="card-body p-0">
             <ul class="list-group list-group-flush rounded-3">
-                {% for project in projects %}
+                {% for project in projects_owner %}
                 <li class="list-group-item d-flex justify-content-between align-items-center p-3">
                     <a href="{% url 'project_detail' project_pk=project.pk %}"><p class="mb-0">{{ project.name }}</p>
                     </a>
-                    <a href="{% url 'delete_project' project_pk=project.pk %}">
-                        <p class="mb-0">
-                            <button type="button" class="btn btn-danger btn-sm">X</button>
-                        </p>
-                    </a>
+                    {% if project.owner == request.user %}
+                        <button type="button" class="btn btn-danger btn-sm" style="background: none; color: red; border: none" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                          удалить проект
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить проект</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body text-start">
+                                <h6>Вы действительно хотите удалить проект?</h6>
+                                <small>После удаления восстановить проект будет невозможно!<br>Вы можете снять проект с публикации чтобы он не отображался в списке проектов.</small>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                <a href="{% url 'delete_project' project_pk=project.pk %}" type="button" class="btn btn-danger">Удалить</a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    {% endif %}
                 </li>
+                {% empty %}
+                <h5 class="text-center p-3">У вас нет проектов</h5>
                 {% endfor %}
             </ul>
         </div>
     </div>
-    <div class="m-2">
+    <h4 class="text-center mt-4">Участник:</h4>
+    <div class="card mb-4 mb-lg-0">
+        <div class="card-body p-0">
+            <ul class="list-group list-group-flush rounded-3">
+                {% for p, new_mes in new_message_status_list %}
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                    <a href="{% url 'project_detail' project_pk=p.pk %}">
+                        {% if new_mes %}
+                        <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                            <span class="visually-hidden">New alerts</span>
+                        </span>
+                        {% endif %}
+                        <p class="mb-0">{{ p.name }}</p>
+                    </a>
+                </li>
+                {% empty %}
+                <h5 class="text-center p-3">Вы не участвуете ни в одном проекте</h5>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <h4 class="text-center mt-4">Заявки на участие:</h4>
+    <div class="card mb-4 mb-lg-0">
+        <div class="card-body p-0">
+            <ul class="list-group list-group-flush rounded-3">
+                {% for a in applicant %}
+                <li class="list-group-item d-flex justify-content-between align-items-center p-3">
+                    <a href="{% url 'project_detail' project_pk=a.pk %}"><p class="mb-0">{{ a.name }}</p>
+                    </a>
+                </li>
+                {% empty %}
+                <h5 class="text-center p-3">Вы не подавали заявок на участие</h5>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="mt-3">
         <a href="{% url 'create_project' %}">
             <p class="mb-0">
-                <button type="button" class="btn btn-success btn-sm">Новый проект</button>
+                <button type="button" class="btn main-btn btn-sm">Создать новый проект</button>
             </p>
         </a>
     </div>

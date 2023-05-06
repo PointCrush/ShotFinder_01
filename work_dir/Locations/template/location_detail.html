@@ -1,0 +1,76 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-xxl-6 col-lg-8 col-mb-10 col-sm-11">
+        <div class="card overflow-hidden">
+            <div class="card-header d-flex align-items-end p-2 ps-3"
+                 style="background-color: #4f46e5; opacity: 0.6; height: 150px">
+                <div class="col-8">
+                    <p class="m-0" style="color: white;">{{ location.owner }}</p>
+                    <h1 class="p-0 m-0" style="color: white;">{{ location.title }}</h1>
+                </div>
+                <div class="col-4 ms-auto justify-content-end text-end">
+                    <h6 class="ms-auto me-3" style="color: white;">{{ location.city }}</h6>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-10">
+                        <h5>Описание: </h5>
+                        <p>{{ location.description }}</p>
+                    </div>
+                </div>
+                <hr style="color: #2e1065">
+                <div class="row justify-content-end">
+                    <div class="col-10 text-end">
+                        <h5>Как добраться: </h5>
+                        <p>{{ location.way }}</p>
+                    </div>
+                </div>
+                <hr style="color: #2e1065">
+                <div class="row justify-content-center">
+                    <h5 class="mb-3 text-center">Фоторафии локации:</h5>
+                    {% for image in location.photos.all %}
+                    <div class="col-4 overflow-hidden mb-4">
+                        <a href="{{ image.image.url }}">
+                        <img src="{{ image.image.url }}" alt="location photo"
+                            class="img-fluid h-100 w-100"/></a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if user == location.owner %}
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить проект</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-start">
+            <h6>Вы действительно хотите удалить локацию?</h6>
+            <small>После удаления восстановление будет невозможно!<br></small>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+            <a href="{% url 'delete_location' loc_pk=location.pk %}" type="button" class="btn btn-danger">Удалить</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-2">
+        <div class="btn-group-vertical" style="opacity: 0.75; border-color: white" role="group" aria-label="Vertical button group">
+  <a href="{% url 'edit_location' loc_pk=location.pk %}" style="border-color: white" type="button" class="btn main-btn btn-sm">Редактировать</a>
+  <a href="{% url 'upload_image_location' loc_pk=location.pk %}" style="border-color: white" type="button" class="btn main-btn btn-sm">Добавить фотографии</a>
+  <button type="button" class="btn btn-danger btn-sm p-0" style="border-color: white" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Удалить
+  </button>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

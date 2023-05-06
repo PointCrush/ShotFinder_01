@@ -1,6 +1,6 @@
-<div class="m-2">
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-            data-bs-target="#uploadModal">Добавить фотографии
+<div class="mb-3">
+    <button type="button" class="btn main-btn btn-sm" data-bs-toggle="modal"
+            data-bs-target="#uploadModal">Загрузить фотографии
     </button>
 </div>
 
@@ -9,7 +9,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5 modal-m11" id="exampleModalLabel">Галерея</h1>
+                <h1 class="modal-title fs-5 modal-m11" id="exampleModalLabel">Загрузить фотографии</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
             </div>
@@ -20,10 +20,10 @@
                         <div id="thumbnails"></div>
                         {{ upload_form.as_p }}
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Загрузить</button>
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                 Close
                             </button>
+                            <button type="submit" class="btn main-btn">Загрузить</button>
                         </div>
                     </form>
                 </div>

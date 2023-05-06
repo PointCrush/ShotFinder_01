@@ -2,24 +2,23 @@
 
 
 {% block content %}
-
 <div class="container" style="margin-top: 50px;">
     <div class="row justify-content-center">
         <div class="col-md-6 text-center">
-            <h1 class="display-3">Создание {{context}}</h1>
+            <h1 class="display-3">Создание модели</h1>
         </div>
     </div>
 </div>
-<div class="container" style="margin-top: 50px;">
+<div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6 text-center">
+        <div class="col-md-6 col-sm-10 text-center">
 {% if error_message %}
     <div class="alert alert-danger">{{ error_message }}</div>
 {% endif %}
         </div>
     </div>
 </div>
-
+ {% if form %}
 <form method="post" enctype="multipart/form-data" class="mx-auto" style="width: 700px; margin: 50px;">
   {% csrf_token %}
   {% for field in form %}
@@ -38,7 +37,7 @@
       {% endif %}
     </div>
   {% endfor %}
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn main-btn">Сохранить</button>
 </form>
-
+{% endif %}
 {% endblock %}

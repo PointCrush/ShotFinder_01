@@ -32,6 +32,10 @@ urlpatterns = [
     path('calendar/', include('Calendar.urls')),
     path('notifications/', include('Notifications.urls')),
     path('chat/', include('chat.urls')),
+    path('locations/', include('Locations.urls')),
+    path('studios/', include('Studios.urls')),
+    path('accounts/', include('allauth.urls')),
+
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,274 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+
+<style>
+    @media (max-width: 1400px) {
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .btn {
+    width: 100%;
+    margin: 1px;
+  }
+}
+
+</style>
+
+<div class="row justify-content-center">
+    <div class="col-xxl-6 col-lg-8 col-mb-10 col-sm-11">
+        <div class="card overflow-hidden">
+            <div class="card-header d-flex align-items-end p-2 ps-3"
+                 style="background-color: #4f46e5; opacity: 0.6; height: 150px">
+                <div class="col-8">
+                    <p class="m-0" style="color: white;">{{ project.owner }}</p>
+                    <h1 class="p-0 m-0" style="color: white;">{{ project.name }}</h1>
+                </div>
+                <div class="col-4 ms-auto justify-content-end text-end">
+                    <h6 class="ms-auto me-3" style="color: white;">{{ project.city }}</h6>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-4">
+                        <div class="accordion accordion-flush" id="accordionFlushExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#flush-collapseOne" aria-expanded="false"
+                                            aria-controls="flush-collapseOne">
+                                        О проекте:
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseOne" class="accordion-collapse collapse"
+                                     data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body">
+                                        <p><h6>Город:</h6> {{ project.city }}</p>
+                                        <p><h6>О проекте:</h6> {{ project.description }}</p>
+                                        <p><h6>Требуются для участия:</h6> {{ project.looking_for.all|join:", " }}</p>
+                                        {% if project.price %}
+                                        <p><h6>Прайс:</h6> {{ project.price }}</p>
+                                        {% endif %}
+                                        <p><h6>TFP проект:</h6> {% if project.tfp %}Да{% else %}Нет{% endif %}</p>
+                                        <p><h6>Строго 18+:</h6> {% if project.adult_only %}Да{% else %}Нет{% endif %}</p>
+                                        <p><h6>Опубликован:</h6> {% if project.is_published %}Да{% else %}Нет{%endif%}</p>
+                                        <br>
+                                        <small>
+                                            <p><h6>Редактировалось:</h6> {{ project.time_update }}</p>
+                                            <p><h6>Дата создания:</h6> {{ project.time_create }}</p>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#flush-collapseTwo" aria-expanded="false"
+                                            aria-controls="flush-collapseTwo">
+                                        Участники проекта:
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseTwo" class="accordion-collapse collapse"
+                                     data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body">{% for member in members %}
+                                        {% with link=member.link %}
+                                        <a href="{% url link post_id=member.object_id %}">
+                                            <p>{{ member.role }}: {{ member.member.owner }}</p></a>
+                                        {% if user == project.owner and user != member.member.owner %}
+                                        <a href="{% url 'remove_from_project' project_pk=project.pk member_pk=member.pk %}">
+                                            <button type="button" class="btn btn-outline-danger btn-sm p-1"
+                                                    style="border: none">Исключить
+                                            </button>
+                                        </a>
+                                        {% endif %}
+                                        {% endwith %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% if user == project.owner %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#flush-collapseThree" aria-expanded="false"
+                                            aria-controls="flush-collapseThree">
+                                        Заявители:
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseThree" class="accordion-collapse collapse"
+                                     data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body">
+                                        {% if not applicants %}
+                                        <h6>Никто не подал заявку</h6>
+                                        {% else %}
+                                        {% for applicant in applicants %}
+                                        {% with link=applicant.link %}
+                                        <a href="{% url link post_id=applicant.object_id %}">
+                                            <p>{{ applicant.role }}: {{ applicant.member.owner }}</p>
+                                        </a>
+                                        <a href="{% url 'approve' project_pk=project.pk applicant_pk=applicant.pk %}">
+                                            <button type="button" class="btn btn-outline-success btn-sm">Одобрить
+                                            </button>
+                                        </a>
+                                        {% endwith %}
+                                        {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#flush-collapseFour" aria-expanded="false"
+                                            aria-controls="flush-collapseThree">
+                                        Приглашенные:
+                                    </button>
+                                </h2>
+                                <div id="flush-collapseFour" class="accordion-collapse collapse"
+                                     data-bs-parent="#accordionFlushExample">
+                                    <div class="accordion-body">
+                                        {% if not invited %}
+                                        <h6>Нет приглашенных учасников</h6>
+                                        {% else %}
+                                        {% for i in invited %}
+                                        {% with link=i.link %}
+                                        <a href="{% url link post_id=i.object_id %}">
+                                            <p>{{ i.role }}: {{ i.member.owner }}</p></a>
+                                        {% endwith %}
+                                        {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% if not user == project.owner %}
+                            <div>
+                            <p class=""><h6>Подать заявку как:</h6>
+                                <div class="btn-group w-100" role="group" aria-label="role-choice">
+                                {% for role in project.looking_for.all %}
+                                <button type="button" class="btn main-btn btn-create-member btn-sm"
+                                        data-project-id="{{ project.pk }}"
+                                        data-profession-id="{{ role.pk }}">
+                                    {{ role }}
+                                </button>
+                                {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {% if user.username in members_owner %}
+                        <div class="mt-2">
+                            <a href="{% url 'project_chat_room' room_name=project.pk %}">
+                                <button type="button" class="btn btn-secondary btn-sm position-relative opacity-100" style="background-color: #9ca3af; border: none;">Чат проекта
+                                {% if new_message_count %}
+                                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ new_message_count }}
+                                    <span class="visually-hidden">unread messages</span>
+                                  </span>
+                                {% endif %}
+                                </button>
+                            </a>
+                            </div>
+                        {% endif %}
+                        </div>
+                    <div class="col-1">
+                    </div>
+                    <div class="col-7">
+                        <h4 class="text-center opacity-75">Референсы {% if user == project.owner %}
+                            <a class="btn btn-sm main-btn" href="{% url 'edit_references' project_pk=project.pk %}">
+                                изменить</a>{% endif %}</h4>
+                        <div class="container border rounded overflow-hidden p-1 mb-2">
+                            <div class="container border rounded">
+                                <div class="row references">
+                                    {% if project.references.all %}
+                                    {% for i in project.references.all %}
+                                    <div class="col-4 m-0 p-0">
+                                        <img src="{{ i.image.url }}" alt="Project reference"
+                                             class="img-fluid h-100 w-100" style="max-height: 250px"/>
+                                    </div>
+                                    {% endfor %}
+                                    {% else %}
+                                    <h6 class="m-3 opacity-75">Референсы не добавлены</h6>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% if project.owner == request.user %}
+                        <div class="row">
+                            <div class="col-6">
+                                <a href="{% url 'edit_project' project_pk=project.pk %}" class="btn main-btn btn-sm">Редактировать проект</a>
+                            </div>
+                            <div class="col-6 text-end">
+<!--                                <a href="{% url 'delete_project' project_pk=project.pk %}" class="btn btn-danger btn-sm ms-auto" style="background: none; color: red; border: none">удалить проект</a>-->
+                                <!-- Button trigger modal -->
+                                    <button type="button" class="btn btn-danger btn-sm" style="background: none; color: red; border: none" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                      удалить проект
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить проект</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body text-start">
+                                            <h6>Вы действительно хотите удалить проект?</h6>
+                                            <small>После удаления восстановить проект будет невозможно!<br>Вы можете снять проект с публикации чтобы он не отображался в списке проектов.</small>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                            <a href="{% url 'delete_project' project_pk=project.pk %}" type="button" class="btn btn-danger">Удалить</a>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--        <div class="col-2">-->
+<!--            <div class="btn-group-vertical" style="opacity: 0.75; border-color: white" role="group" aria-label="Vertical button group">-->
+<!--  <button style="border-color: white" type="button" class="btn main-btn btn-sm">Редактировать</button>-->
+<!--  <button style="border-color: white" type="button" class="btn main-btn btn-sm">Изменить референсы</button>-->
+<!--  <button style="border-color: white" type="button" class="btn main-btn btn-sm">Чат проекта</button>-->
+<!--  <button style="border-color: white" type="button" class="btn btn-danger btn-sm p-0">Удалить проект</button>-->
+<!--        </div>-->
+<!--    </div>-->
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(function() {
+        $('.btn-create-member').click(function() {
+            var projectId = $(this).data('project-id');
+            var professionId = $(this).data('profession-id');
+
+            $.ajax({
+                url: '{% url 'give_response' %}',
+                method: 'POST',
+                headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                data: {
+                    'project_id': projectId,
+                    'profession_id': professionId,
+                    // add any other parameters you need
+                },
+                success: function(response) {
+                    alert('Заявка на участие подана!');
+                },
+                error: function(error) {
+                    alert('Возникла ошибка при подаче заявки.');
+                }
+            });
+        });
+    });
+
+</script>
+{% endblock %}

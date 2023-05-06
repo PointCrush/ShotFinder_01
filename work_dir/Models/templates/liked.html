@@ -1,12 +1,97 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-    <h1>Liked Models</h1>
-    <ul>
-        {% for model in liked_models %}
-            <li><a href="{% url 'model_post' model.pk %}">{{ model.owner.username }}</a></li>
-        {% empty %}
+<style>
+
+.avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
+ul {
+    list-style: none;
+}
+
+.avatar-container {
+    background-color: #f2f2f2;
+    border-radius: 30px;
+    display: inline-block;
+    padding: 10px;
+}
+
+
+
+</style>
+
+<div class="container">
+<div class="row">
+<div class="col-12 m-3">
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="liked-models-tab" data-bs-toggle="tab" data-bs-target="#liked-models"
+                type="button" role="tab" aria-controls="liked-models" aria-selected="true">Модели
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="liked-ph-tab" data-bs-toggle="tab" data-bs-target="#liked-ph" type="button"
+                role="tab" aria-controls="liked-ph" aria-selected="false">Фотографы
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="liked-staff-tab" data-bs-toggle="tab" data-bs-target="#liked-staff" type="button"
+                role="tab" aria-controls="liked-staff" aria-selected="false">Стилисты
+        </button>
+    </li>
+</ul>
+<div class="tab-content border border-top-0 shadow" id="myTabContent">
+    <div class="tab-pane fade show active" id="liked-models" role="tabpanel" aria-labelledby="liked-models-tab">
+        <ul class="d-flex flex-row">
+            {% for model in liked_models %}
+            <li class="m-2 mt-4">
+                <div class="avatar-container">
+                    <img class="avatar m-0" src="{{ model.avatar.url }}">
+                    <div class="d-flex justify-content-center">{{ model.owner.username }}</div>
+                    <a class="d-flex justify-content-center" href="{% url 'model_post' model.pk %}">View Profile</a>
+                </div>
+            </li>
+            {% empty %}
             <li>You haven't liked any models yet.</li>
-        {% endfor %}
-    </ul>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="tab-pane fade" id="liked-ph" role="tabpanel" aria-labelledby="liked-ph-tab">
+        <ul class="d-flex flex-row">
+            {% for model in liked_ph %}
+            <li class="m-2 mt-4">
+                <div class="avatar-container">
+                    <img class="avatar m-0" src="{{ model.avatar.url }}">
+                    <div class="d-flex justify-content-center">{{ model.owner.username }}</div>
+                    <a class="d-flex justify-content-center" href="{% url 'ph_post' model.pk %}">View Profile</a>
+                </div>
+            </li>
+            {% empty %}
+            <li>You haven't liked any models yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="tab-pane fade" id="liked-staff" role="tabpanel" aria-labelledby="liked-staff-tab">
+        <ul class="d-flex flex-row">
+            {% for model in liked_staff %}
+            <li class="m-2 mt-4">
+                <div class="avatar-container">
+                    <img class="avatar m-0" src="{{ model.avatar.url }}">
+                    <div class="d-flex justify-content-center">{{ model.owner.username }}</div>
+                    <a class="d-flex justify-content-center" href="{% url 'post_staff' model.pk %}">View Profile</a>
+                </div>
+            </li>
+            {% empty %}
+            <li>You haven't liked any models yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+</div>
+</div>
+</div>
 {% endblock %}

@@ -1,0 +1,10 @@
+body {
+  background-color: #f6f8f8;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.main-btn {
+  background-color: #2e1065;
+  opacity: 1
+}

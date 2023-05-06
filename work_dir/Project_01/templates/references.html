@@ -2,18 +2,19 @@
 
 
 {% block content %}
-<div class="container">
-  <h1>Upload Images</h1>
+<div class="row justify-content-center">
+    <div class="col-xxl-4 col-xl-5 col-lg-6 col-mb-8 col-sm-10">
+  <h1>Референсы к проекту</h1>
+  <p>Загрузите несколько фотографий-референсов к прокекту <br>
+    <small>Все прикрепленные ранее рефернсы будут удалены</small>
+  </p>
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {% if upload_form.errors %}
-    <div class="alert alert-danger">
-        {{ upload_form.errors }}
-    </div>
 {% endif %}
-
     {{ upload_form.as_p }}
-    <button type="submit" class="btn btn-primary">Upload</button>
+    <button type="submit" class="btn main-btn">Загрузить</button>
   </form>
+    </div>
 </div>
 {% endblock %}

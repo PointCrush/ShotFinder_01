@@ -1,0 +1,29 @@
+{% extends 'base/base.html' %}
+
+
+{% block content %}
+
+<div class="row text-center mx-auto mt-3">
+<div class="alert alert-primary" role="alert">
+  Недостаточно прав для просмотра данного контента.
+  Пожалуйста, зарегистрируйтесь или авторизируйтесь.
+</div>
+</div>
+
+<div class="container" style="margin-top: 30px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h1 class="display-3">Авторизация</h1>
+        </div>
+    </div>
+</div>
+
+
+  <form method="post" class="mx-auto" style="width: 700px;">
+    {% csrf_token %}
+    {{ form.as_p }}
+<button type="submit" class="btn btn-primary">Войти</button>
+  </form>
+
+
+{% endblock %}

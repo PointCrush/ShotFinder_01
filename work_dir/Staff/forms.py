@@ -19,7 +19,8 @@ class StaffForm(forms.ModelForm):
     avatar = forms.ImageField(label='Фото профиля', required=True,
                               widget=forms.ClearableFileInput(attrs={'class': 'form-control'}))
     is_published = forms.BooleanField(label='Опубликовать',
-                                      widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}), required=False, initial=True)
+                                      widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}), required=False,
+                                      initial=True)
 
     inst = forms.CharField(required=False, max_length=250, widget=forms.TextInput(attrs={'class': 'form-control'}))
     vk = forms.CharField(required=False, max_length=250, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -39,16 +40,19 @@ class CommentForm(forms.ModelForm):
         model = CommentStaff
         fields = ('text',)
         widgets = {
-            'text': forms.Textarea(attrs={'rows': 3}),
+            'text': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
         }
 
 
 class AlbumForm(forms.ModelForm):
     class Meta:
         model = AlbumStaff
-        fields = ['title', ]
+        fields = ['title']
         labels = {
             'title': 'Добавить альбом',
+        }
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
 

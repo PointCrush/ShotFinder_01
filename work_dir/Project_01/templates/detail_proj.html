@@ -23,12 +23,12 @@
             {% endif %}
         </div>
         <div class="col-md-4">
-            <p><strong>Members:</strong></p>
+            <p><strong>Участники проекта:</strong></p>
             {% for member in members %}
             {% with link=member.link %}
             <a href="{% url link post_id=member.object_id %}">
                 <p>{{ member.role }}: {{ member.member.owner }}</p></a>
-            {% if user == project.owner %}
+            {% if user == project.owner and user != member.member.owner %}
             <a href="{% url 'remove_from_project' project_pk=project.pk member_pk=member.pk %}">
                 <button type="button" class="btn btn-outline-danger btn-sm">Отказать в участии</button>
             </a>
@@ -36,16 +36,35 @@
             {% endwith %}
             {% endfor %}
             {% if user.username in members_owner %}
-            <div class="container-fluid mt-2">
+            <div class="container-fluid mt-3">
             <a href="{% url 'project_chat_room' room_name=project.pk %}">
-                <button type="button" class="btn btn-info">Чат проекта</button>
+                <button type="button" class="btn btn-info position-relative">Чат проекта
+                {% if new_message_count %}
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {{ new_message_count }}
+                    <span class="visually-hidden">unread messages</span>
+                  </span>
+                {% endif %}
+                </button>
             </a>
             </div>
             {% endif %}
+
+            <p class="mt-2"><strong>Хочу участвовать как:</strong>
+            <div class="btn-group" role="group" aria-label="role-choice">
+                {% for role in project.looking_for.all %}
+                <button type="button" class="btn btn-primary btn-create-member"
+                        data-project-id="{{ project.pk }}"
+                        data-profession-id="{{ role.pk }}">
+                    {{ role }}
+                </button>
+                {% endfor %}
+            </div>
+
         </div>
         <div class="col-md-4">
             {% if user == project.owner %}
-            <p><strong>Applicants:</strong></p>
+            <p><strong>Заявки:</strong></p>
             {% for applicant in applicants %}
             {% with link=applicant.link %}
             <a href="{% url link post_id=applicant.object_id %}">
@@ -57,16 +76,14 @@
             {% endwith %}
             {% endfor %}
             {% endif %}
-            <p><strong>Хочу участвовать как:</strong>
-            <div class="btn-group" role="group" aria-label="Basic example">
-                {% for role in project.looking_for.all %}
-                <button type="button" class="btn btn-primary btn-create-member"
-                        data-project-id="{{ project.pk }}"
-                        data-profession-id="{{ role.pk }}">
-                    {{ role }}
-                </button>
-                {% endfor %}
-            </div>
+
+            <p class="mt-2"><strong>Приглашены:</strong></p>
+            {% for i in invited %}
+            {% with link=i.link %}
+            <a href="{% url link post_id=i.object_id %}">
+                <p>{{ i.role }}: {{ i.member.owner }}</p></a>
+            {% endwith %}
+            {% endfor %}
         </div>
     </div>
     <hr>

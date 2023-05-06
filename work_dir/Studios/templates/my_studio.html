@@ -1,0 +1,33 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-sm-10">
+        <h1 class="text-center mt-5">Мои студии</h1>
+        {% for std in studios %}
+        <a class="nav-link" href="{% url 'studio_detail' studio_pk=std.pk %}">
+            <div class="card m-3 p-3">
+                <div class="row">
+                    <div class="col-2" style="height: 100px">
+                        {% if std.logo %}
+                        <img src="{{ std.logo.url }}" class="h-100 rounded" style="max-width: 100%">
+                        {% else %}
+                        <img src="https://pbs.twimg.com/profile_images/578844000267816960/6cj6d4oZ_400x400.png" class="h-100" style="max-width: 100%">
+                        {% endif %}
+                    </div>
+                    <div class="col-8 mt-2">
+                        <h4>{{ std.title }}</h4>
+                        <h5>{{ std.owner }}</h5>
+                        <small class="mute">{{ std.time_create }}</small>
+
+                    </div>
+                </div>
+<!--                <small class="mute">{{ std.time_create }}</small>-->
+            </div>
+            </a>
+        {% empty %}
+            <h3 class="text-center">Список пуст</h3>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

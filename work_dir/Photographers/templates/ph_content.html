@@ -13,70 +13,66 @@
     }
 
 
+
 </style>
 
 
 <link type="text/css" href="{% static 'css/cards.css' %}" rel="stylesheet"/>
-<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css">-->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
 
 {% endblock %}
 
 {% block content %}
 
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-3 col-lg-2 filter-container mt-3">
-      <form method="get">
-        {{ filter.form.as_p }}
-        <button type="submit" class="btn btn-primary mt-2">Фильтр</button>
-      </form>
-    </div>
-    <div class="col-md-9 col-lg-10">
-      <div class="container text-center">
-        <a class="nav-link" href="{% url create %}">
-          <h1 class="display-10">Создать карточку {{ object }}</h1>
-        </a>
-      </div>
-      <div class="row">
-        {% for p in filter.qs %}
-        <div class="col-lg-3 col-sm-6 mb-4">
-          <div class="card p-0">
-            <a href="{% url post p.pk %}">
-              <div class="card-image avatar">
-                {% if p.avatar %}
-                <img src="{{ p.avatar.url }}" alt="">
-                {% endif %}
-              </div>
-            </a>
-            <div class="card-content d-flex flex-column align-items-center">
-              <h4 class="pt-2">{{ p.owner.first_name }} {{ p.owner.last_name }}</h4>
-              <h5>{{ p.city }}</h5>
-              <ul class="social-icons d-flex justify-content-center">
-                <li style="--i:1">
-                </li>
-                <li style="--i:2">
-                  <a href="#">
-                    <span class="fab fa-twitter"></span>
-                  </a>
-                </li>
-                <li style="--i:3">
-                  <a href="#">
-                    <span class="fab fa-instagram"></span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
+    <div class="row">
+        <div class="col-md-3 col-lg-2 filter-container mt-3 mb-3">
+            <form method="get">
+                {{ filter.form.as_p }}
+                <button type="submit" class="btn main-btn mt-2">Фильтр</button>
+            </form>
         </div>
-        {% endfor %}
-      </div>
+        <div class="col-md-9 col-lg-10 mt-2">
+            <div class="container text-center">
+                    <h1 class="display-10">Фотографы</h1>
+                    <h5 class="text-center text-muted mb-4" style="font-style: italic">мастера остановки времени в лучшие его проявления</h5>
+            </div>
+            <div class="row">
+                {% for p in filter.qs %}
+                <div class="col-xxl-2 col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+
+                    <div class="card p-0">
+                        <a href="{% url post p.pk %}">
+                            <div class="card-image avatar">
+                                {% if p.avatar %}
+                                <img src="{{ p.avatar.url }}" alt="">
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div class="card-content d-flex flex-column align-items-center">
+                            <h5 class="pt-2">{{ p.owner.first_name }} {{ p.owner.last_name }}</h5>
+                            <h6>{{ p.city }}</h6>
+                            <ul class="social-icons d-flex justify-content-center">
+                                <li style="--i:1">
+                                </li>
+                                <li style="--i:2">
+                                    <a href="#">
+                                        <span class="fab fa-twitter"></span>
+                                    </a>
+                                </li>
+                                <li style="--i:3">
+                                    <a href="#">
+                                        <span class="fab fa-instagram"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>>
 
 
 {% endblock %}

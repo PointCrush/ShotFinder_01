@@ -5,79 +5,99 @@
     .border-3 {
         border-width: 3px !important;
     }
+
+    .gallery {
+      padding: 5px
+    }
+    .gallery img {
+      height: 350px;
+      width: 250px;
+      object-fit: cover;
+    }
+
+
 </style>
-
-<div class="container-fluid mt-5">
-    <div class="d-flex justify-content-between mb-3">
-        <div>
-            <!-- Buttons and forms section -->
-            <div>
-                <a class="btn btn-danger btn-sm m-2" href="{% url 'album_delete_staff' pk=post.pk album_pk=album_pk %}">Удалить
-                    текущий альбом</a>
-                <form method="post" class="form-inline form-control">
-                    {% csrf_token %}
-                    {{ create_album_form.as_p }}
-                    <button type="submit" class="btn btn-primary mt-2">Создать</button>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        {% for album in albums %}
-        <div class="col-6 col-md-4 col-lg-2 mb-3">
-            <a href="{% url 'photo_editor_staff' pk=post.pk album_pk=album.pk %}" class="text-decoration-none text-dark">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        {% if album.pk == album_pk %}
-                        <i class="fas fa-folder fa-4x mb-3" style="color: #abd7e2;"></i>
-                        {% else %}
-                        <i class="fas fa-folder fa-4x mb-3"></i>
-                        {% endif %}
-                        <h5 class="card-title">{{ album.title }}</h5>
+<div class="row justify-content-center">
+    <div class="col-11">
+        <div class="container-fluid mt-4 border rounded p-3">
+            <div class="d-flex justify-content-between mb-3">
+                    <div class="col-3">
+                        <form method="post" class="form-inline form-control">
+                            {% csrf_token %}
+                            {{ create_album_form.as_p }}
+                            <button type="submit" class="btn btn-secondary btn-sm mt-2">Создать</button>
+                        </form>
                     </div>
+                <div class="col-9 p-2">
+                    <strong>Вы можете созавать новые альбомы и загружать в них фотографии</strong>
+                    <p>Для этого введите название альбома в форму и нажмите "создать". Альбом тут же добавится в список ваших альбомов.</p>
+                    <p>Для того чтобы удалить альбом - выберите альбом который хотите удалить и нажмите "удалить текущий альбом". <strong>Внимание:</strong> вместе с альбомом удалятся и все хранящиеся в нем фотографии.</p>
                 </div>
-            </a>
-        </div>
-        {% endfor %}
-    </div>
-    <hr>
-    <h1>{{ album_name }}</h1>
-    <div>
-        <button type="button" class="btn btn-danger btn-sm m-2" onclick="deleteSelected()">Удалить выбранные
-            фотографии
-        </button>
-        <div class="w-50 m-2">
-            {% include 'upload_image.html' %}
+            </div>
+            <div class="row">
+                {% for album in albums %}
+                <div class="col-6 col-md-4 col-lg-2 mb-3">
+                    <a href="{% url 'photo_editor_staff' pk=post.pk album_pk=album.pk %}"
+                       class="text-decoration-none text-dark">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                {% if album.pk == album_pk %}
+                                <i class="fas fa-folder fa-4x mb-3" style="color: #abd7e2;"></i>
+                                {% else %}
+                                <i class="fas fa-folder fa-4x mb-3"></i>
+                                {% endif %}
+                                <h5 class="card-title">{{ album.title }}</h5>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+            <a class="btn btn-danger btn-sm mt-2" href="{% url 'album_delete_staff' pk=post.pk album_pk=album_pk %}">Удалить
+                текущий альбом</a>
+            <hr>
+            <div class="row">
+                <div class="col-2">
+            <h1>{{ album_name }}</h1>
+                    {% include 'upload_image.html' %}
+                <button type="button" id="delete-photos-btn" class="btn btn-danger btn-sm" onclick="deleteSelected()">Удалить выбранные фотографии</button>
+                </div>
+                <div class="col-5 ms-auto text-end">
+                    <strong>Перемещайте фотографии между альбомами</strong>
+                    <p>Выделите несколько фотографий, в выпадающем списке выберите один из ваших альбомов и подтвердите перемещение.</p>
+                </div>
+                    <div class="col-3 text-end">
+                    <form id="move-photos-form" method="POST" class="form-inline form-control">
+                        {% csrf_token %}
+                        <p>Выберите альбом</p>
+                        {{ form.as_p }}
+                        <select name="album" id="album-dropdown" class="form-control">
+                            <option value="">------</option>
+                            {% for album in albums %}
+                            <option value="{{ album.id }}">{{ album.title }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" id="move-to-album-btn" class="btn btn-secondary btn-sm mt-2" disabled>
+                            Переместить в альбом
+                        </button>
+                    </form>
+                </div>
 
-            <form id="move-photos-form" method="POST" class="form-inline form-control w-50">
+                </div>
+            <form id="delete-form" method="post">
                 {% csrf_token %}
-                {{ form.as_p }}
-                <select name="album" id="album-dropdown" class="form-control">
-                    <option value="">Выберите альбом</option>
-                    {% for album in albums %}
-                    <option value="{{ album.id }}">{{ album.title }}</option>
+                <div class="row row-cols-3 row-cols-md-4 row-cols-lg-6 g-3 mt-3">
+                    {% for photo in photos %}
+                    <div class="col gallery">
+                            <img src="{{ photo.image.url }}" class="img-fluid rounded" alt="{{ photo.title }}"
+                                 data-id="{{ photo.pk }}" onclick="selectPhoto(event)">
+                    </div>
                     {% endfor %}
-                </select>
-                <button type="submit" id="move-to-album-btn" class="btn btn-primary mt-2" disabled>Переместить в
-                    альбом
-                </button>
+                </div>
             </form>
         </div>
 
     </div>
-    <form id="delete-form" method="post">
-        {% csrf_token %}
-        <div class="row row-cols-3 row-cols-md-4 row-cols-lg-6 g-3">
-            {% for photo in photos %}
-            <div class="col">
-                <div class="card">
-                    <img src="{{ photo.image.url }}" class="img-fluid rounded" alt="{{ photo.title }}"
-                         data-id="{{ photo.pk }}" onclick="selectPhoto(event)">
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </form>
 </div>
 
 

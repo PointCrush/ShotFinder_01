@@ -1,13 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
 
 # Create your models here.
 class Project_01(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE,related_name='projects')
     my_profession = models.ForeignKey('Professions', on_delete=models.CASCADE, related_name='owner_role', null=True)
     name = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
@@ -21,7 +21,7 @@ class Project_01(models.Model):
     is_published = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.name} in {self.city}"
+        return f"{self.name} ({self.city})"
 
     def get_my_projects(self, user):
         return Project_01.objects.filter(owner=user)
@@ -45,7 +45,7 @@ class ProjectMember(models.Model):
     link = models.CharField(max_length=50, null=True)
     date_joined = models.DateTimeField(default=timezone.now)
     is_approved = models.BooleanField(default=False)
-
+    is_invited = models.BooleanField(default=False)
     class Meta:
         unique_together = ('project', 'content_type', 'object_id')
 

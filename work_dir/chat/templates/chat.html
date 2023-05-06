@@ -3,23 +3,59 @@
 {% block title %}Chat{% endblock %}
 
 {% block content %}
+<div class="container-fluid" style="max-width: 600px">
 <div class="row justify-content-center align-items-center m-3">
-    <div class="col-4">
+    <div class="col-12">
         <div class="card">
-            <div class="card-header">Chat Room: {{ room_name }}</div>
-            <div class="card-body m-3" id="chat-log" style="overflow-y: scroll; height: 700px;">
-                {% for message in messages %}
-                <p>{{ message.author }}: {{ message.content }}</p>
+            <div class="card-header">{{ room_title }}</div>
+            <div class="card-body m-3" id="chat-log" style="overflow-y: scroll; height: 600px;">
+                {% for message, is_read in message_status_list %}
+                <p class="position-relative">
+                    {% if is_read %}
+                    <span class="unread-message position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+    <span class="visually-hidden">New message</span>
+  </span>
+                <script>
+                    setTimeout(function() {
+                      const message_pk = {{ message.pk }};
+
+                        fetch(`/chat/is_reading/${parseInt(message_pk)}/`, {
+                          method: 'GET',
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                        })
+
+                        .then(response => response.json())
+                        .then(data => console.log(data))
+                        .catch(error => console.error(error));
+
+                        const alert = document.querySelector('.unread-message');
+                        alert.remove();
+
+                    }, 1500);
+
+                </script>
+
+                    {% endif %}
+                {{ message.author }}: {{ message.content }}</p>
                 {% endfor %}
+                <script>
+                setTimeout(function() {
+                        const alert = document.querySelector('.unread-message');
+                        alert.remove();
+                                            }, 1500);
+                </script>
             </div>
             <div class="card-footer">
                 <div class="input-group">
                     <input id="chat-message-input" type="text" class="form-control">
-                    <button id="chat-message-submit" class="btn btn-primary">Отправить</button>
+                    <button id="chat-message-submit" class="btn main-btn">Отправить</button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <script>
@@ -64,6 +100,20 @@ function scrollToBottom() {
 
 // Прокручиваем до последнего сообщения при загрузке страницы
 scrollToBottom();
+
+// Получаем координаты первого непрочитанного сообщения
+function scrollToUnreadMessage() {
+  const chatLog = document.querySelector('#chat-log');
+  const lastUnreadMessage = document.querySelector('.unread-message');
+  if (lastUnreadMessage) {
+    lastUnreadMessage.scrollIntoView();
+  } else {
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+}
+
+// Прокручиваем страницу до первого непрочитанного сообщения
+scrollToUnreadMessage();
 
 </script>
 {% endblock %}

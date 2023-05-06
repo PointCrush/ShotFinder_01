@@ -2,13 +2,23 @@
 
 
 {% block content %}
-<div class="container">
-  <h1>Create Project</h1>
+<div class="row justify-content-center">
+<div class="col-xxl-6 col-mb-8 col-sm-10">
+  <h1>Создание/редактирование проекта</h1>
+  {% if error_message %}
+  <div class="container my-5">
+  <div class="alert alert-danger">
+    <h5 class="alert-heading">Возникла ошибка при создании</h5>
+    <p>{{ error_message }}</p>
+  </div>
+</div>
+  {% endif %}
   <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Create</button>
+    <button type="submit" class="btn main-btn">Сохранить</button>
   </form>
+</div>
 </div>
 {% endblock %}
 

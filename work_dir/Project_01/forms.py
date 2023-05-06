@@ -20,9 +20,9 @@ class ProjectCreateForm(forms.ModelForm):
 
     my_profession = forms.ModelChoiceField(
         label='Я',
-        queryset=Professions.objects.all(),
+        queryset=None,
         required=True,
-        widget=forms.Select(attrs={'class': 'form-select', 'size': '3'})
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     city = forms.CharField(
@@ -71,9 +71,14 @@ class ProjectCreateForm(forms.ModelForm):
         widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['my_profession'].queryset = Professions.objects.all()
+        self.fields['my_profession'].empty_label = None
+
 
 class UploadImageForm(forms.ModelForm):
-    images = forms.ImageField(widget=forms.ClearableFileInput(attrs={'multiple': True, 'class': 'form-control'}))
+    images = forms.ImageField(label='Референсы', widget=forms.ClearableFileInput(attrs={'multiple': True, 'class': 'form-control'}))
 
     class Meta:
         model = ImageProject01

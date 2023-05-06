@@ -1,0 +1,25 @@
+{% extends 'base/base.html' %}
+
+
+{% block content %}
+<div class="container p-5">
+
+<div class="row justify-content-center">
+    <div class="col-xl-6 col-md-8 col-11">
+  <h1>Фотографии к локации</h1>
+  <p>Загрузите несколько фотографий к локации чтобы другим пользователям было проще понять где место находится и оценить его особенности.</p>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% if upload_form.errors %}
+    <div class="alert alert-danger">
+        {{ upload_form.errors }}
+    </div>
+{% endif %}
+
+    {{ upload_form.as_p }}
+    <button type="submit" class="btn main-btn">Загрузить</button>
+  </form>
+</div>
+</div>
+</div>
+{% endblock %}
